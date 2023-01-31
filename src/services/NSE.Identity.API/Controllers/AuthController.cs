@@ -4,6 +4,7 @@ using NSE.Identity.API.Dtos;
 
 namespace NSE.Identity.API.Controllers
 {
+    [ApiController]
     [Route("api/identity")]
     public class AuthController : Controller
     {
