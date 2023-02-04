@@ -18,7 +18,7 @@
 
             app.UseRouting();
 
-            app.UserIdentityConfiguration();
+            app.UseIdentityConfiguration();
 
             app.UseEndpoints(endpoints =>
             {
