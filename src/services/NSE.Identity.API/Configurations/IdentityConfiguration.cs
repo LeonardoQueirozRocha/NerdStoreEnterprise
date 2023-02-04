@@ -49,7 +49,7 @@ namespace NSE.Identity.API.Configurations
             return services;
         }
 
-        public static IApplicationBuilder UserIdentityConfiguration(this IApplicationBuilder app)
+        public static IApplicationBuilder UseIdentityConfiguration(this IApplicationBuilder app)
         {
             app.UseAuthorization();
 
