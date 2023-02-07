@@ -53,7 +53,7 @@ namespace NSE.WebApp.MVC.Controllers
 
             if (false) return View(userLogin);
 
-            // Realizar login na PPA
+            // Realizar login na app
 
             return RedirectToAction("Index", "Home");
         }
