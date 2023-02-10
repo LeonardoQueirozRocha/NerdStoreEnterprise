@@ -1,14 +1,17 @@
-﻿using NSE.WebApp.MVC.Services;
+﻿using NSE.WebApp.MVC.Extensions;
+using NSE.WebApp.MVC.Services;
 
 namespace NSE.WebApp.MVC.Configurations
 {
     public static class DependencyInjectionConfiguration
     {
-        public static IServiceCollection AddServices(this IServiceCollection services)
+        public static void AddServices(this IServiceCollection services)
         {
             services.AddHttpClient<IAuthService, AuthService>();
 
-            return services;
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            services.AddScoped<IUser, AspNetUser>();
         }
     }
 }
