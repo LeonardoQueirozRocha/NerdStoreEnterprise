@@ -2,14 +2,12 @@
 {
     public static class WebAppConfiguration
     {
-        public static IServiceCollection AddMvcConfiguration(this IServiceCollection services)
+        public static void AddMvcConfiguration(this IServiceCollection services)
         {
             services.AddControllersWithViews();
-
-            return services;
         }
 
-        public static IApplicationBuilder UseMvcConfiguration(this IApplicationBuilder app, IWebHostEnvironment env)
+        public static void UseMvcConfiguration(this IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -32,9 +30,7 @@
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
-            });
-
-            return app;
+            });            
         }
     }
 }
