@@ -1,16 +1,20 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
 using NSE.WebApp.MVC.Models.Identity;
 using NSE.WebApp.MVC.Services;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace NSE.WebApp.MVC.Controllers
 {
     public class IdentityController : Controller
     {
-        private readonly IAuthenticationService _authenticationService;
+        private readonly IAuthService _authService;
 
-        public IdentityController(IAuthenticationService authenticationService)
+        public IdentityController(IAuthService authService)
         {
-            _authenticationService = authenticationService;
+            _authService = authService;
         }
 
         [HttpGet]
@@ -26,11 +30,12 @@ namespace NSE.WebApp.MVC.Controllers
         {
             if (!ModelState.IsValid) return View(userRegistration);
 
-            var response = await _authenticationService.RegisterAsync(userRegistration);
+            var response = await _authService.RegisterAsync(userRegistration);
 
-            if (false) return View(userRegistration);
+            //if (false) return View(userRegistration);
 
             // Realizar login na PPA
+            await Login(response);
 
             return RedirectToAction("Index", "Home");
         }
@@ -49,11 +54,12 @@ namespace NSE.WebApp.MVC.Controllers
         {
             if (!ModelState.IsValid) return View(userLogin);
 
-            var response = await _authenticationService.LoginAsync(userLogin);
+            var response = await _authService.LoginAsync(userLogin);
 
-            if (false) return View(userLogin);
+            //if (false) return View(userLogin);
 
             // Realizar login na app
+            await Login(response);
 
             return RedirectToAction("Index", "Home");
         }
@@ -64,5 +70,26 @@ namespace NSE.WebApp.MVC.Controllers
         {
             return RedirectToAction("Index", "Home");
         }
+
+        private async Task Login(UserResponseLogin response)
+        {
+            var token = GetFormattedToken(response.AccessToken);
+
+            var claims = new List<Claim> { new Claim("JWT", response.AccessToken) };
+            claims.AddRange(token.Claims);
+
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var authenticationProperties = new AuthenticationProperties
+            {
+                ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(60),
+                IsPersistent = true,
+            };
+
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authenticationProperties);
+        }
+
+        private static JwtSecurityToken GetFormattedToken(string jwtToken)
+            => new JwtSecurityTokenHandler().ReadToken(jwtToken) as JwtSecurityToken;
     }
 }

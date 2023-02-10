@@ -6,7 +6,7 @@ namespace NSE.WebApp.MVC.Configurations
     {
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
-            services.AddHttpClient<IAuthenticationService, AuthenticationService>();
+            services.AddHttpClient<IAuthService, AuthService>();
 
             return services;
         }
