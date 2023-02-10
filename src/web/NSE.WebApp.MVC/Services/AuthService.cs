@@ -4,11 +4,11 @@ using System.Text.Json;
 
 namespace NSE.WebApp.MVC.Services
 {
-    public class AuthenticationService : IAuthenticationService
+    public class AuthService : IAuthService
     {
         private readonly HttpClient _httpClient;
 
-        public AuthenticationService(HttpClient httpClient)
+        public AuthService(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
