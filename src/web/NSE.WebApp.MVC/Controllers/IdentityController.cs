@@ -1,14 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using NSE.WebApp.MVC.Controllers.Base;
 using NSE.WebApp.MVC.Models.Identity;
-using NSE.WebApp.MVC.Services;
+using NSE.WebApp.MVC.Services.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace NSE.WebApp.MVC.Controllers
 {
-    public class IdentityController : Controller
+    public class IdentityController : MainController
     {
         private readonly IAuthService _authService;
 
@@ -32,10 +33,9 @@ namespace NSE.WebApp.MVC.Controllers
 
             var response = await _authService.RegisterAsync(userRegistration);
 
-            //if (false) return View(userRegistration);
+            if (HasResponseErrors(response.ResponseResult)) return View(userRegistration);
 
-            // Realizar login na PPA
-            await Login(response);
+            await LoginAsync(response);
 
             return RedirectToAction("Index", "Home");
         }
@@ -56,10 +56,9 @@ namespace NSE.WebApp.MVC.Controllers
 
             var response = await _authService.LoginAsync(userLogin);
 
-            //if (false) return View(userLogin);
+            if (HasResponseErrors(response.ResponseResult)) return View(userLogin);
 
-            // Realizar login na app
-            await Login(response);
+            await LoginAsync(response);
 
             return RedirectToAction("Index", "Home");
         }
@@ -71,7 +70,7 @@ namespace NSE.WebApp.MVC.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        private async Task Login(UserResponseLogin response)
+        private async Task LoginAsync(UserResponseLogin response)
         {
             var token = GetFormattedToken(response.AccessToken);
 
