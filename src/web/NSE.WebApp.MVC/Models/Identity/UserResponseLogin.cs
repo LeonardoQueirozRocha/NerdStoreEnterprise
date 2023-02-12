@@ -1,4 +1,6 @@
-﻿namespace NSE.WebApp.MVC.Models.Identity
+﻿using NSE.WebApp.MVC.Models.Error;
+
+namespace NSE.WebApp.MVC.Models.Identity
 {
     public class UserResponseLogin
     {
