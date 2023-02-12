@@ -1,4 +1,4 @@
-﻿using NSE.WebApp.MVC.Models;
+﻿using NSE.WebApp.MVC.Models.Error;
 using NSE.WebApp.MVC.Models.Identity;
 using NSE.WebApp.MVC.Services.Base;
 using NSE.WebApp.MVC.Services.Interfaces;

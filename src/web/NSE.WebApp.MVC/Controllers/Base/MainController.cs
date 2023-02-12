@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NSE.WebApp.MVC.Models;
+using NSE.WebApp.MVC.Models.Error;
 
 namespace NSE.WebApp.MVC.Controllers.Base
 {

@@ -1,18 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NSE.WebApp.MVC.Models;
-using System.Diagnostics;
+using NSE.WebApp.MVC.Models.Error;
 
 namespace NSE.WebApp.MVC.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
-
         public IActionResult Index()
         {
             return View();
@@ -23,10 +15,35 @@ namespace NSE.WebApp.MVC.Controllers
             return View();
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        [Route("error/{id:length(3,3)}")]
+        public IActionResult Error(int id)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var errorViewModel = new ErrorViewModel();
+
+            if (id == 500)
+            {
+                errorViewModel.Message = "Ocorreu um erro! Tente novamente mais tarde ou contate nosso suporte";
+                errorViewModel.Title = "Ocorreu um erro!";
+                errorViewModel.ErrorCode = id;
+            }
+            else if (id == 404)
+            {
+                errorViewModel.Message = "A página que está procurando não existe! <br />Em caso de dúvidas entre em contato com o nosso suporte";
+                errorViewModel.Title = "Ops! Página não encontrada.";
+                errorViewModel.ErrorCode = id;
+            }
+            else if (id == 403)
+            {
+                errorViewModel.Message = "Você não tem permissão para fazer isto.";
+                errorViewModel.Title = "Acesso Negado";
+                errorViewModel.ErrorCode = id;
+            }
+            else
+            {
+                return StatusCode(404);
+            }
+
+            return View(errorViewModel);
         }
     }
 }
