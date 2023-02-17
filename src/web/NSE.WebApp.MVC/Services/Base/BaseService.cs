@@ -12,7 +12,7 @@ namespace NSE.WebApp.MVC.Services.Base
             return new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
         }
 
-        protected async Task<T> DeserializeResponseObjetct<T>(HttpResponseMessage responseMessage)
+        protected async Task<T> DeserializeResponseObject<T>(HttpResponseMessage responseMessage)
         {
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
