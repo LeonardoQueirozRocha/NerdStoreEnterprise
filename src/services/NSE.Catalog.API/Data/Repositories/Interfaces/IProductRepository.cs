@@ -1,7 +1,7 @@
 ﻿using NSE.Catalog.API.Models;
 using NSE.Core.Data;
 
-namespace NSE.Catalog.API.Interfaces
+namespace NSE.Catalog.API.Data.Repositories.Interfaces
 {
     public interface IProductRepository : IRepository<Product>
     {
