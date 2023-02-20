@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using NSE.Catalog.API.Data;
-using NSE.Catalog.API.Interfaces;
+using NSE.Catalog.API.Data.Repositories.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 

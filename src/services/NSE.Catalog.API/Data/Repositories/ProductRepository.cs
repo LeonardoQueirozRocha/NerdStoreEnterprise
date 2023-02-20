@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using NSE.Catalog.API.Interfaces;
+using NSE.Catalog.API.Data.Repositories.Interfaces;
 using NSE.Catalog.API.Models;
 using NSE.Core.Data;
 
