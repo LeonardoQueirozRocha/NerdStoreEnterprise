@@ -1,26 +1,25 @@
-using Microsoft.EntityFrameworkCore;
-using NSE.Catalog.API.Data;
-using NSE.Catalog.API.Data.Repositories.Interfaces;
+using NSE.Catalog.API.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddDbContext<CatalogContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Configuration.SetBasePath(builder.Environment.ContentRootPath)
+                     .AddJsonFile("appsettings.json", true, true)
+                     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", true, true)
+                     .AddEnvironmentVariables();
 
-builder.Services.AddControllers();
+if (builder.Environment.IsProduction())
+    builder.Configuration.AddUserSecrets<StartupBase>();
 
-builder.Services.AddScoped<IProductRepository, IProductRepository>();
-builder.Services.AddScoped<CatalogContext>();
+builder.Services.AddApiConfiguration(builder.Configuration);
+
+builder.Services.AddSwaggerConfiguration();
+
+builder.Services.AddServices();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+app.UseSwaggerConfiguration();
 
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
+app.UseApiConfiguration(builder.Environment);
 
 app.Run();
