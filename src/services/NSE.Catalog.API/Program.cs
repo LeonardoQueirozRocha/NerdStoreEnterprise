@@ -1,4 +1,5 @@
 using NSE.Catalog.API.Configurations;
+using NSE.WebApi.Core.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,8 @@ if (builder.Environment.IsProduction())
     builder.Configuration.AddUserSecrets<StartupBase>();
 
 builder.Services.AddApiConfiguration(builder.Configuration);
+
+builder.Services.AddJwtConfiguration(builder.Configuration);
 
 builder.Services.AddSwaggerConfiguration();
 

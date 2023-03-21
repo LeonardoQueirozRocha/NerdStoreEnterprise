@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NSE.Catalog.API.Data;
+using NSE.WebApi.Core.Identity;
 
 namespace NSE.Catalog.API.Configurations
 {
@@ -33,6 +34,8 @@ namespace NSE.Catalog.API.Configurations
             app.UseRouting();
 
             app.UseCors("Total");
+
+            app.UseAuthConfiguration();
 
             app.UseEndpoints(endpoints =>
             {
