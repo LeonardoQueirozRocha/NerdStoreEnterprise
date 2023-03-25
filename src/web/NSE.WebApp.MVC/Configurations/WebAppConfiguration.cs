@@ -40,7 +40,7 @@ namespace NSE.WebApp.MVC.Configurations
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapControllerRoute("default", "{controller=Catalog}/{action=Index}/{id?}");
             });            
         }
     }
