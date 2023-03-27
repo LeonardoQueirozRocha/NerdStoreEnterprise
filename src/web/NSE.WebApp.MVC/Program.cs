@@ -14,7 +14,7 @@ builder.Services.AddIdentityConfiguration();
 
 builder.Services.AddMvcConfiguration(builder.Configuration);
 
-builder.Services.AddServices();
+builder.Services.AddServices(builder.Configuration);
 
 var app = builder.Build();
 

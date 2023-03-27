@@ -12,6 +12,7 @@
   <ItemGroup>
     <PackageReference Include="microsoft.aspnetcore.Authentication.JwtBearer" Version="6.0.13" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
+    <PackageReference Include="Refit" Version="6.3.2" />
   </ItemGroup>
 
 </Project>
