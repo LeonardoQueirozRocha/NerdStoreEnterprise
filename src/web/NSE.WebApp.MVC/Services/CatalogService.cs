@@ -18,7 +18,7 @@ namespace NSE.WebApp.MVC.Services
 
         public async Task<IEnumerable<ProductViewModel>> GetAllAsync()
         {
-            var response = await _httpClient.GetAsync("catalog/products/");
+            var response = await _httpClient.GetAsync("/catalog/products/");
 
             HandleResponseErrors(response);
 
@@ -27,7 +27,7 @@ namespace NSE.WebApp.MVC.Services
 
         public async Task<ProductViewModel> GetByIdAsync(Guid id)
         {
-            var response = await _httpClient.GetAsync($"catalog/products/{id}");
+            var response = await _httpClient.GetAsync($"/catalog/products/{id}");
 
             HandleResponseErrors(response);
 
