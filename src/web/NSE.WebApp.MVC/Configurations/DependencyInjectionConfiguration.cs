@@ -4,6 +4,7 @@ using NSE.WebApp.MVC.Services.Handlers;
 using NSE.WebApp.MVC.Services.Interfaces;
 using Polly;
 using Polly.Extensions.Http;
+using Polly.Retry;
 
 namespace NSE.WebApp.MVC.Configurations
 {
@@ -15,7 +16,23 @@ namespace NSE.WebApp.MVC.Configurations
 
             services.AddHttpClient<IAuthService, AuthService>();
 
-            var retryWaitPolicy = HttpPolicyExtensions
+            services.AddHttpClient<ICatalogService, CatalogService>()
+                    .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
+                    //.AddTransientHttpErrorPolicy(p => p.WaitAndRetryAsync(3, _ => TimeSpan.FromMilliseconds(600)));
+                    .AddPolicyHandler(PollyExtensions.RetryWait())
+                    .AddTransientHttpErrorPolicy(p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
+
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            services.AddScoped<IUser, AspNetUser>();
+        }
+    }
+
+    public class PollyExtensions
+    {
+        public static AsyncRetryPolicy<HttpResponseMessage> RetryWait()
+        {
+            var retry = HttpPolicyExtensions
                 .HandleTransientHttpError()
                 .WaitAndRetryAsync(new[]
                 {
@@ -29,14 +46,7 @@ namespace NSE.WebApp.MVC.Configurations
                     Console.ForegroundColor = ConsoleColor.White;
                 });
 
-            services.AddHttpClient<ICatalogService, CatalogService>()
-                    .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
-                    //.AddTransientHttpErrorPolicy(p => p.WaitAndRetryAsync(3, _ => TimeSpan.FromMilliseconds(600)));
-                    .AddPolicyHandler(retryWaitPolicy);
-
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
-            services.AddScoped<IUser, AspNetUser>();
+            return retry;
         }
     }
 }
