@@ -1,4 +1,5 @@
 ﻿using NSE.Core.Messages;
+using NSE.Customers.API.Application.Validations;
 
 namespace NSE.Customers.API.Application.Commands
 {
@@ -16,6 +17,12 @@ namespace NSE.Customers.API.Application.Commands
             Name = name;
             Email = email;
             Cpf = cpf;
+        }
+
+        public override bool IsValid()
+        {
+            ValidationResult = new RegisterCustomerValidation().Validate(this);
+            return ValidationResult.IsValid;
         }
     }
 }
