@@ -3,7 +3,7 @@ using NSE.Core.Data;
 using NSE.Customers.API.Models;
 using NSE.Customers.API.Models.Interfaces;
 
-namespace NSE.Customers.API.Data
+namespace NSE.Customers.API.Data.Repositories
 {
     public class CustomerRepository : ICustomerRepository
     {
