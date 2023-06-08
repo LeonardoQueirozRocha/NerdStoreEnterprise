@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation.Results;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace NSE.Identity.API.Controllers.Base
+namespace NSE.WebApi.Core.Controllers
 {
     [ApiController]
     public abstract class MainController : Controller
@@ -23,6 +24,13 @@ namespace NSE.Identity.API.Controllers.Base
             var errors = modelState.Values.SelectMany(erro => erro.Errors);
 
             foreach (var error in errors) AddProcessingError(error.ErrorMessage);
+
+            return CustomResponse();
+        }
+
+        protected ActionResult CustomResponse(ValidationResult validationResult)
+        {
+            foreach (var erro in validationResult.Errors) AddProcessingError(erro.ErrorMessage);
 
             return CustomResponse();
         }
