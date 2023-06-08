@@ -1,4 +1,6 @@
-﻿using NSE.WebApp.MVC.Extensions;
+﻿using Microsoft.AspNetCore.Mvc.DataAnnotations;
+using NSE.WebApp.MVC.Extensions;
+using NSE.WebApp.MVC.Extensions.CustomDataAnnotations.CpfAnnotation;
 using NSE.WebApp.MVC.Services;
 using NSE.WebApp.MVC.Services.Handlers;
 using NSE.WebApp.MVC.Services.Interfaces;
@@ -12,6 +14,8 @@ namespace NSE.WebApp.MVC.Configurations
     {
         public static void AddServices(this IServiceCollection services)
         {
+            services.AddSingleton<IValidationAttributeAdapterProvider, CpfValidationAttributeAdapterProvider>();
+
             services.AddTransient<HttpClientAuthorizationDelegatingHandler>();
 
             services.AddHttpClient<IAuthService, AuthService>();
