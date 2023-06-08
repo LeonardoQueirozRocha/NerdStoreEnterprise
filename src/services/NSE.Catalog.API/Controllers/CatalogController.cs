@@ -2,13 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using NSE.Catalog.API.Data.Repositories.Interfaces;
 using NSE.Catalog.API.Models;
+using NSE.WebApi.Core.Controllers;
 using NSE.WebApi.Core.Identity;
 
 namespace NSE.Catalog.API.Controllers
 {
-    [ApiController]
     [Authorize]
-    public class CatalogController : Controller
+    public class CatalogController : MainController
     {
         private readonly IProductRepository _productRepository;
 
