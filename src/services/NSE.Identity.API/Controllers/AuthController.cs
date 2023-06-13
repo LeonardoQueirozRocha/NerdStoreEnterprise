@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using EasyNetQ;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using NSE.Core.Messages.Integrations;
 using NSE.Identity.API.Models;
 using NSE.WebApi.Core.Controllers;
 using NSE.WebApi.Core.Identity;
@@ -17,14 +19,17 @@ namespace NSE.Identity.API.Controllers
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly AppSettings _appSettings;
+        private IBus _bus;
 
         public AuthController(
             SignInManager<IdentityUser> signInManager,
             UserManager<IdentityUser> userManager,
+            IBus bus,
             IOptions<AppSettings> appSettings)
         {
             _signInManager = signInManager;
             _userManager = userManager;
+            _bus = bus;
             _appSettings = appSettings.Value;
         }
 
@@ -42,7 +47,12 @@ namespace NSE.Identity.API.Controllers
 
             var result = await _userManager.CreateAsync(user, userRegistration.Password);
 
-            if (result.Succeeded) return CustomResponse(await GenerateJwtAsync(userRegistration.Email));
+            if (result.Succeeded)
+            {
+                var success = await CustomerRegistrationAsync(userRegistration);
+
+                return CustomResponse(await GenerateJwtAsync(userRegistration.Email));
+            }
 
             foreach (var error in result.Errors) AddProcessingError(error.Description);
 
@@ -125,6 +135,18 @@ namespace NSE.Identity.API.Controllers
                     Claims = claims.Select(c => new UserClaim { Type = c.Type, Value = c.Value })
                 }
             };
+        }
+
+        private async Task<ResponseMessage> CustomerRegistrationAsync(UserRegistration userRegistration)
+        {
+            var user = await _userManager.FindByEmailAsync(userRegistration.Email);
+            var registeredUser = new RegisteredUserIntegrationEvent(Guid.Parse(user.Id), userRegistration.Name, userRegistration.Email, userRegistration.Cpf);
+
+            _bus = RabbitHutch.CreateBus("host=localhost:5672");
+
+            var success = await _bus.Rpc.RequestAsync<RegisteredUserIntegrationEvent, ResponseMessage>(registeredUser);
+
+            return success;
         }
 
         private static long ToUnixEpochDate(DateTime date)
