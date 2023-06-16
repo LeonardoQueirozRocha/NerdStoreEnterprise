@@ -15,7 +15,7 @@ namespace NSE.Core.DomainObjects
         {
             if (!Validate(number)) throw new DomainException("CPF inválido");
 
-            Number = number;
+            Number = number.OnlyNumbers(number);
         }
 
         public static bool Validate(string cpf)
