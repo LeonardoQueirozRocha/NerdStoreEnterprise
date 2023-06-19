@@ -22,6 +22,8 @@ builder.Services.AddMediatR(typeof(StartupBase));
 
 builder.Services.AddServices();
 
+builder.Services.AddMessageBusConfiguration(builder.Configuration);
+
 var app = builder.Build();
 
 app.UseSwaggerConfiguration();
