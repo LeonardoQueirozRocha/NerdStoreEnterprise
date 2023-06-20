@@ -1,10 +1,13 @@
-﻿using NSE.Core.Messages.Integrations;
+﻿using EasyNetQ;
+using NSE.Core.Messages.Integrations;
 
 namespace NSE.MessageBus.Interfaces
 {
     public interface IMessageBus : IDisposable
     {
         bool IsConnected { get; }
+
+        IAdvancedBus AdvancedBus { get; }
 
         void Publish<T>(T message) where T : IntegrationEvent;
 
