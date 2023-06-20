@@ -1,10 +1,10 @@
-﻿using EasyNetQ;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using NSE.Core.Messages.Integrations;
 using NSE.Identity.API.Models;
+using NSE.MessageBus.Interfaces;
 using NSE.WebApi.Core.Controllers;
 using NSE.WebApi.Core.Identity;
 using System.IdentityModel.Tokens.Jwt;
@@ -19,16 +19,18 @@ namespace NSE.Identity.API.Controllers
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly AppSettings _appSettings;
-        private IBus _bus;
+        private readonly IMessageBus _bus;
 
         public AuthController(
             SignInManager<IdentityUser> signInManager,
             UserManager<IdentityUser> userManager,
-            IOptions<AppSettings> appSettings)
+            IOptions<AppSettings> appSettings,
+            IMessageBus bus)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _appSettings = appSettings.Value;
+            _bus = bus;
         }
 
         [HttpPost("new-account")]
@@ -47,7 +49,13 @@ namespace NSE.Identity.API.Controllers
 
             if (result.Succeeded)
             {
-                var success = await CustomerRegistrationAsync(userRegistration);
+                var resultCustomer = await CustomerRegistrationAsync(userRegistration);
+
+                if (!resultCustomer.ValidationResult.IsValid)
+                {
+                    await _userManager.DeleteAsync(user);
+                    return CustomResponse(resultCustomer.ValidationResult);
+                }
 
                 return CustomResponse(await GenerateJwtAsync(userRegistration.Email));
             }
@@ -135,19 +143,23 @@ namespace NSE.Identity.API.Controllers
             };
         }
 
+        private static long ToUnixEpochDate(DateTime date)
+            => (long)Math.Round((date.ToUniversalTime() - new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero)).TotalSeconds);
+
         private async Task<ResponseMessage> CustomerRegistrationAsync(UserRegistration userRegistration)
         {
             var user = await _userManager.FindByEmailAsync(userRegistration.Email);
             var registeredUser = new RegisteredUserIntegrationEvent(Guid.Parse(user.Id), userRegistration.Name, userRegistration.Email, userRegistration.Cpf);
 
-            _bus = RabbitHutch.CreateBus("host=localhost:5672");
-
-            var success = await _bus.Rpc.RequestAsync<RegisteredUserIntegrationEvent, ResponseMessage>(registeredUser);
-
-            return success;
+            try
+            {
+                return await _bus.RequestAsync<RegisteredUserIntegrationEvent, ResponseMessage>(registeredUser);
+            }
+            catch
+            {
+                await _userManager.DeleteAsync(user);
+                throw;
+            }
         }
-
-        private static long ToUnixEpochDate(DateTime date)
-            => (long)Math.Round((date.ToUniversalTime() - new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero)).TotalSeconds);
     }
 }
