@@ -1,4 +1,6 @@
-﻿using NSE.WebApi.Core.Identity;
+﻿using Microsoft.EntityFrameworkCore;
+using NSE.Cart.API.Data;
+using NSE.WebApi.Core.Identity;
 
 namespace NSE.Cart.API.Configurations
 {
@@ -6,6 +8,8 @@ namespace NSE.Cart.API.Configurations
     {
         public static void AddApiConfiguration(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddDbContext<CartContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
             services.AddControllers();
 
             services.AddCors(options =>
