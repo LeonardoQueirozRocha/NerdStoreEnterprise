@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.DataAnnotations;
-using NSE.WebApp.MVC.Extensions;
+using NSE.WebApi.Core.User;
+using NSE.WebApi.Core.User.Interfaces;
 using NSE.WebApp.MVC.Extensions.CustomDataAnnotations.CpfAnnotation;
 using NSE.WebApp.MVC.Services;
 using NSE.WebApp.MVC.Services.Handlers;
@@ -28,7 +29,7 @@ namespace NSE.WebApp.MVC.Configurations
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-            services.AddScoped<IUser, AspNetUser>();
+            services.AddScoped<IAspNetUser, AspNetUser>();
         }
     }
 
