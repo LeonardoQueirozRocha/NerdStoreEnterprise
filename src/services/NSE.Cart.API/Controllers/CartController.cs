@@ -37,6 +37,8 @@ namespace NSE.Cart.API.Controllers
             else
                 HandleExistingCart(cart, item);
 
+            ValidateCart(cart);
+
             if (!IsValid()) return CustomResponse();
 
             await SaveCartAsync();
@@ -54,6 +56,10 @@ namespace NSE.Cart.API.Controllers
 
             cart.UpdateUnits(cartItem, item.Quantity);
 
+            ValidateCart(cart);
+
+            if (!IsValid()) return CustomResponse();
+
             await UpdateCartAsync(cartItem, cart);
 
             return CustomResponse();
@@ -66,6 +72,10 @@ namespace NSE.Cart.API.Controllers
             var cartItem = await GetValidatedCartItemAsync(productId, cart);
 
             if (cartItem == null) return CustomResponse();
+
+            ValidateCart(cart);
+
+            if (!IsValid()) return CustomResponse();
 
             await DeleteCartAsync(cartItem, cart);
 
@@ -125,6 +135,15 @@ namespace NSE.Cart.API.Controllers
             }
 
             return cartItem;
+        }
+
+        private bool ValidateCart(CustomerCart cart)
+        {
+            if (cart.IsValid()) return true;
+
+            cart.ValidationResult.Errors.ForEach(error => AddProcessingError(error.ErrorMessage));
+
+            return false;
         }
 
         private async Task SaveCartAsync()
