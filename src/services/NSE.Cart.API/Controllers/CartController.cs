@@ -47,12 +47,28 @@ namespace NSE.Cart.API.Controllers
         [HttpPut("{productId}")]
         public async Task<IActionResult> UpdateCartItem(Guid productId, CartItem item)
         {
+            var cart = await GetCustomerCartAsync();
+            var cartItem = await GetValidatedCartItemAsync(productId, cart, item);
+
+            if (cartItem == null) return CustomResponse();
+
+            cart.UpdateUnits(cartItem, item.Quantity);
+
+            await UpdateCartAsync(cartItem, cart);
+
             return CustomResponse();
         }
 
         [HttpDelete("{productId}")]
         public async Task<IActionResult> RemoveCartItem(Guid productId)
         {
+            var cart = await GetCustomerCartAsync();
+            var cartItem = await GetValidatedCartItemAsync(productId, cart);
+
+            if (cartItem == null) return CustomResponse();
+
+            await DeleteCartAsync(cartItem, cart);
+
             return CustomResponse();
         }
 
@@ -86,11 +102,53 @@ namespace NSE.Cart.API.Controllers
             _context.CustomerCart.Update(cart);
         }
 
+        private async Task<CartItem> GetValidatedCartItemAsync(Guid productId, CustomerCart cart, CartItem item = null)
+        {
+            if (item != null && productId != item.ProductId)
+            {
+                AddProcessingError("O item não corresponde ao informado");
+                return null;
+            }
+
+            if (cart == null)
+            {
+                AddProcessingError("Carrinho não encontrado");
+                return null;
+            }
+
+            var cartItem = await _context.CartItems.FirstOrDefaultAsync(i => i.CartId == cart.Id && i.ProductId == productId);
+
+            if (cartItem == null || !cart.CartItemExists(cartItem))
+            {
+                AddProcessingError("O item não está no carrinho");
+                return null;
+            }
+
+            return cartItem;
+        }
+
         private async Task SaveCartAsync()
         {
             var result = await _context.SaveChangesAsync();
 
             if (result <= 0) AddProcessingError("Não foi possível persistir os dados no banco");
+        }
+
+        private async Task UpdateCartAsync(CartItem item, CustomerCart cart)
+        {
+            _context.CartItems.Update(item);
+            _context.CustomerCart.Update(cart);
+            await SaveCartAsync();
+        }
+
+        private async Task DeleteCartAsync(CartItem item, CustomerCart cart)
+        {
+            cart.RemoveItem(item);
+
+            _context.CartItems.Remove(item);
+            _context.CustomerCart.Update(cart);
+
+            await SaveCartAsync();
         }
     }
 }

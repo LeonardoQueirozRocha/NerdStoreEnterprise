@@ -41,5 +41,31 @@
             Items.Add(item);
             CalculateCartValue();
         }
+
+        internal void UpdateItem(CartItem item)
+        {
+            if (!item.IsValid()) return;
+
+            item.AttachCart(Id);
+
+            var existedItem = GetByProductId(item.ProductId);
+
+            Items.Remove(existedItem);
+            Items.Add(item);
+
+            CalculateCartValue();
+        }
+
+        internal void UpdateUnits(CartItem item, int units)
+        {
+            item.UpdateUnits(units);
+            UpdateItem(item);
+        }
+
+        internal void RemoveItem(CartItem item)
+        {
+            Items.Remove(GetByProductId(item.ProductId));
+            CalculateCartValue();
+        }
     }
 }
