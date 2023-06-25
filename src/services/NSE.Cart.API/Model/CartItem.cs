@@ -25,6 +25,11 @@ namespace NSE.Cart.API.Model
 
         internal void AddUnits(int units) => Quantity += units;
 
+        internal void UpdateUnits(int units)
+        {
+            Quantity = units;
+        }
+
         internal bool IsValid() => new OrdemItemValidation().Validate(this).IsValid;
 
         public class OrdemItemValidation : AbstractValidator<CartItem>
