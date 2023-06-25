@@ -30,11 +30,11 @@ namespace NSE.Cart.API.Model
             Quantity = units;
         }
 
-        internal bool IsValid() => new OrdemItemValidation().Validate(this).IsValid;
+        internal bool IsValid() => new CartItemValidator().Validate(this).IsValid;
 
-        public class OrdemItemValidation : AbstractValidator<CartItem>
+        public class CartItemValidator : AbstractValidator<CartItem>
         {
-            public OrdemItemValidation()
+            public CartItemValidator()
             {
                 RuleFor(c => c.ProductId)
                     .NotEmpty()
@@ -46,15 +46,15 @@ namespace NSE.Cart.API.Model
 
                 RuleFor(c => c.Quantity)
                     .GreaterThan(0)
-                        .WithMessage("A quantidade mínima de um item é 1");
+                        .WithMessage(item => $"A quantidade mínima para o {item.Name} é 1");
 
                 RuleFor(c => c.Quantity)
                     .LessThan(CustomerCart.MAX_ITEM_QUANTITY)
-                        .WithMessage($"A quantidade máxima de um item é {CustomerCart.MAX_ITEM_QUANTITY}");
+                        .WithMessage(item => $"A quantidade máxima do {item.Name} é {CustomerCart.MAX_ITEM_QUANTITY}");
 
                 RuleFor(c => c.Value)
                     .GreaterThan(0)
-                        .WithMessage("O valor do item precisa ser maior que 0");
+                        .WithMessage(item => $"O valor do {item.Name} precisa ser maior que 0");
             }
         }
     }
