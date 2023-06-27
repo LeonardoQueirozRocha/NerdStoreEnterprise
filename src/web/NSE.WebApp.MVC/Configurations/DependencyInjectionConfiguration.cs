@@ -16,22 +16,32 @@ namespace NSE.WebApp.MVC.Configurations
         public static void AddServices(this IServiceCollection services)
         {
             services.AddSingleton<IValidationAttributeAdapterProvider, CpfValidationAttributeAdapterProvider>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddScoped<IAspNetUser, AspNetUser>();
 
-            services.AddTransient<HttpClientAuthorizationDelegatingHandler>();
+            #region HttpServices
 
-            services.AddHttpClient<IAuthService, AuthService>();
-
-            services.AddHttpClient<ICatalogService, CatalogService>()
-                    .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
-                    //.AddTransientHttpErrorPolicy(p => p.WaitAndRetryAsync(3, _ => TimeSpan.FromMilliseconds(600)));
+            services.AddHttpClient<IAuthService, AuthService>()
                     .AddPolicyHandler(PollyExtensions.RetryWait())
                     .AddTransientHttpErrorPolicy(p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
 
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddHttpClient<ICatalogService, CatalogService>()
+                    .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
+                    .AddPolicyHandler(PollyExtensions.RetryWait())
+                    .AddTransientHttpErrorPolicy(p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
 
-            services.AddScoped<IAspNetUser, AspNetUser>();
+            services.AddHttpClient<ICartService, CartService>()
+                    .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
+                    .AddPolicyHandler(PollyExtensions.RetryWait())
+                    .AddTransientHttpErrorPolicy(p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
+
+            services.AddTransient<HttpClientAuthorizationDelegatingHandler>();
+
+            #endregion
         }
     }
+
+    #region PollyExtensions
 
     public class PollyExtensions
     {
@@ -54,4 +64,6 @@ namespace NSE.WebApp.MVC.Configurations
             return retry;
         }
     }
+
+    #endregion
 }
