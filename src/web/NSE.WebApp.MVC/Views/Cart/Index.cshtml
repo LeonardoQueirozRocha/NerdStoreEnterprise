@@ -40,7 +40,7 @@
                                                         </div>
                                                         <figcaption class="info">
                                                             <a asp-controller="Catalog" asp-action="ProductDetail" asp-route-id="@item.ProductId"><h6 style="padding-top: 10px" class="title text-dark">@item.Name</h6></a>
-                                                            <p class="text-muted small">@this.FormatCurrency(item.Quantity)</p>
+                                                            <p class="text-muted small">@this.UnityPerProduct(item.Quantity)</p>
                                                         </figcaption>
                                                     </figure>
                                                 </td>
@@ -53,7 +53,7 @@
                                                 <form method="post" asp-controller="Cart" asp-action="UpdateCartItem">
                                                 <td>
 
-                                                    <input type="hidden" id="ProdutoId" name="ProdutoId" value="@item.ProductId" />
+                                                    <input type="hidden" id="ProductId" name="ProductId" value="@item.ProductId" />
 
                                                     <div class="text-left">
                                                         <select id="Quantity" name="Quantity" style="width: 80px" class="form-control">
@@ -95,7 +95,7 @@
 
                             <div class="card-body border-top">
                                 <a href="#" class="btn btn-primary float-md-right"> Finalizar Compra <i class="fa fa-chevron-right"></i> </a>
-                                <a asp-controller="Cart" asp-action="Index" class="btn btn-light"> <i class="fa fa-chevron-left"></i> Continuar Comprando </a>
+                                <a asp-controller="Catalog" asp-action="Index" class="btn btn-light"> <i class="fa fa-chevron-left"></i> Continuar Comprando </a>
                             </div>
                         </div>
 
