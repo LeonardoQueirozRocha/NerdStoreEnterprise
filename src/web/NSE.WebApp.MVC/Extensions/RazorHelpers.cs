@@ -36,7 +36,7 @@ namespace NSE.WebApp.MVC.Extensions
         public static string SelectOptionsPerQuantity(this RazorPage page, int quantity, int selectedValue = 0)
         {
             var sb = new StringBuilder();
-            for (int i = 0; i < quantity; i++)
+            for (int i = 1; i <= quantity; i++)
             {
                 var selected = "";
                 if (i == selectedValue) selected = "selected";
