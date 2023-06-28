@@ -4,7 +4,6 @@ using System.Security.Claims;
 
 namespace NSE.WebApi.Core.User
 {
-
     public class AspNetUser : IAspNetUser
     {
         private readonly IHttpContextAccessor _accessor;

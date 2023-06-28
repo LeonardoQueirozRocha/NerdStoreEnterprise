@@ -21,6 +21,8 @@ namespace NSE.WebApp.MVC.Configurations
 
             #region HttpServices
 
+            services.AddTransient<HttpClientAuthorizationDelegatingHandler>();
+
             services.AddHttpClient<IAuthService, AuthService>()
                     .AddPolicyHandler(PollyExtensions.RetryWait())
                     .AddTransientHttpErrorPolicy(p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
@@ -34,8 +36,6 @@ namespace NSE.WebApp.MVC.Configurations
                     .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
                     .AddPolicyHandler(PollyExtensions.RetryWait())
                     .AddTransientHttpErrorPolicy(p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
-
-            services.AddTransient<HttpClientAuthorizationDelegatingHandler>();
 
             #endregion
         }

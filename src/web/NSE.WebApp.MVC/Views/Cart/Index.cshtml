@@ -11,7 +11,7 @@
         <vc:Summary></vc:Summary>
 
         @{
-            if (Model.Itens.Any())
+            if (Model.Items.Any())
             {
                 <div class="row">
                     <main class="col-md-9">
@@ -30,13 +30,13 @@
                                 </thead>
                                 <tbody>
                                     @{
-                                        foreach (var item in Model.Itens)
+                                        foreach (var item in Model.Items)
                                         {
                                             <tr>
                                                 <td>
                                                     <figure class="itemside">
                                                         <div class="aside">
-                                                            <img src="~/images/produtos/@item.Image" alt="@item.Name" class="img-sm">
+                                                            <img src="~/images/products/@item.Image" alt="@item.Name" class="img-sm">
                                                         </div>
                                                         <figcaption class="info">
                                                             <a asp-controller="Catalog" asp-action="ProductDetail" asp-route-id="@item.ProductId"><h6 style="padding-top: 10px" class="title text-dark">@item.Name</h6></a>
@@ -135,7 +135,7 @@
                                 </dl>
                                 <hr>
                                 <p class="text-center mb-3">
-                                    <img src="images/misc/payments.png" height="26">
+                                    <img src="~/images/misc/payments.png" height="26">
                                 </p>
 
                             </div>

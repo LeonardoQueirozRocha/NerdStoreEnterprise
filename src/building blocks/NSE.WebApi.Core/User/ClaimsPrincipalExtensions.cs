@@ -9,7 +9,7 @@ namespace NSE.WebApi.Core.User
             if (principal == null)
                 throw new ArgumentNullException(nameof(principal));
 
-            var claim = principal.FindFirst("sub");
+            var claim = principal.FindFirst(ClaimTypes.NameIdentifier);
             return claim?.Value;
         }
 
