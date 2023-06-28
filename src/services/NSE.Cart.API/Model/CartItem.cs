@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using System.Text.Json.Serialization;
 
 namespace NSE.Cart.API.Model
 {
@@ -17,6 +18,8 @@ namespace NSE.Cart.API.Model
         public string Image { get; set; }
 
         public Guid CartId { get; set; }
+
+        [JsonIgnore]
         public CustomerCart CustomerCart { get; set; }
 
         internal void AttachCart(Guid cartId) => CartId = cartId;
@@ -49,7 +52,7 @@ namespace NSE.Cart.API.Model
                         .WithMessage(item => $"A quantidade mínima para o {item.Name} é 1");
 
                 RuleFor(c => c.Quantity)
-                    .LessThan(CustomerCart.MAX_ITEM_QUANTITY)
+                    .LessThanOrEqualTo(CustomerCart.MAX_ITEM_QUANTITY)
                         .WithMessage(item => $"A quantidade máxima do {item.Name} é {CustomerCart.MAX_ITEM_QUANTITY}");
 
                 RuleFor(c => c.Value)

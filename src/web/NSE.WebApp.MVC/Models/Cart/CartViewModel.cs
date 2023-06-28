@@ -3,6 +3,6 @@
     public class CartViewModel
     {
         public decimal TotalValue { get; set; }
-        public List<ProductItemViewModel> Itens { get; set; } = new List<ProductItemViewModel>();
+        public List<ProductItemViewModel> Items { get; set; } = new List<ProductItemViewModel>();
     }
 }
