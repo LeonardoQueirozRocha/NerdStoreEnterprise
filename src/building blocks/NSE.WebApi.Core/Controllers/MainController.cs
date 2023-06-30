@@ -1,6 +1,7 @@
 ﻿using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using NSE.Core.Communication;
 
 namespace NSE.WebApi.Core.Controllers
 {
@@ -30,9 +31,25 @@ namespace NSE.WebApi.Core.Controllers
 
         protected ActionResult CustomResponse(ValidationResult validationResult)
         {
-            foreach (var erro in validationResult.Errors) AddProcessingError(erro.ErrorMessage);
+            validationResult.Errors.ForEach(erro => AddProcessingError(erro.ErrorMessage));
 
             return CustomResponse();
+        }
+
+        protected ActionResult CustomResponse(ResponseResult response)
+        {
+            HasResponseErrors(response);
+
+            return CustomResponse();
+        }
+
+        protected bool HasResponseErrors(ResponseResult response)
+        {
+            if (response == null || !response.Errors.Messages.Any()) return false;
+
+            response.Errors.Messages.ForEach(message => AddProcessingError(message));
+
+            return true;
         }
 
         protected bool IsValid() => !Errors.Any();

@@ -1,5 +1,5 @@
-﻿using NSE.WebApp.MVC.Extensions;
-using NSE.WebApp.MVC.Models.Error;
+﻿using NSE.Core.Communication;
+using NSE.WebApp.MVC.Extensions;
 using System.Net;
 using System.Text;
 using System.Text.Json;
@@ -8,10 +8,7 @@ namespace NSE.WebApp.MVC.Services.Base
 {
     public abstract class BaseService
     {
-        protected StringContent GetContent(object data)
-        {
-            return new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
-        }
+        protected StringContent GetContent(object data) => new(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
 
         protected async Task<T> DeserializeResponseObject<T>(HttpResponseMessage responseMessage)
         {
@@ -39,9 +36,6 @@ namespace NSE.WebApp.MVC.Services.Base
             return true;
         }
 
-        protected ResponseResult OkResult()
-        {
-            return new ResponseResult();
-        }
+        protected ResponseResult Ok() => new();
     }
 }

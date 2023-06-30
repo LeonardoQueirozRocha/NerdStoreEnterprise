@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
+using NSE.Core.Communication;
 using NSE.WebApp.MVC.Extensions;
 using NSE.WebApp.MVC.Models.Cart;
-using NSE.WebApp.MVC.Models.Error;
 using NSE.WebApp.MVC.Services.Base;
 using NSE.WebApp.MVC.Services.Interfaces;
 
@@ -33,7 +33,7 @@ namespace NSE.WebApp.MVC.Services
 
             if (!HandleResponseErrors(response)) return await DeserializeResponseObject<ResponseResult>(response);
 
-            return OkResult();
+            return Ok();
         }
 
         public async Task<ResponseResult> UpdateCartItemAsync(Guid productId, ProductItemViewModel product)
@@ -43,7 +43,7 @@ namespace NSE.WebApp.MVC.Services
 
             if (!HandleResponseErrors(response)) return await DeserializeResponseObject<ResponseResult>(response);
 
-            return OkResult();
+            return Ok();
         }
 
         public async Task<ResponseResult> RemoveCartItemAsync(Guid productId)
@@ -52,7 +52,7 @@ namespace NSE.WebApp.MVC.Services
 
             if (!HandleResponseErrors(response)) return await DeserializeResponseObject<ResponseResult>(response);
 
-            return OkResult();
+            return Ok();
         }
     }
 }

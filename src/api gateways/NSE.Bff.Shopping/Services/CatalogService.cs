@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using NSE.Bff.Shopping.Extensions;
+using NSE.Bff.Shopping.Models;
 using NSE.Bff.Shopping.Services.Base;
 using NSE.Bff.Shopping.Services.Interfaces;
 
@@ -13,6 +14,15 @@ namespace NSE.Bff.Shopping.Services
         {
             _httpClient = httpClient;
             _httpClient.BaseAddress = new Uri(settings.Value.CatalogUrl);
+        }
+
+        public async Task<ProductItemDTO> GetByIdAsync(Guid id)
+        {
+            var response = await _httpClient.GetAsync($"catalog/products/{id}");
+
+            HandleResponseErrors(response);
+
+            return await DeserializeResponseObject<ProductItemDTO>(response);
         }
     }
 }

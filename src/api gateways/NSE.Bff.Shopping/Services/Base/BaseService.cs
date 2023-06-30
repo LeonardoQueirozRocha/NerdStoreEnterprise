@@ -1,15 +1,13 @@
 ﻿using System.Net;
 using System.Text.Json;
 using System.Text;
+using NSE.Core.Communication;
 
 namespace NSE.Bff.Shopping.Services.Base
 {
     public class BaseService
     {
-        protected StringContent GetContent(object data)
-        {
-            return new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
-        }
+        protected StringContent GetContent(object data) => new(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
 
         protected async Task<T> DeserializeResponseObject<T>(HttpResponseMessage responseMessage)
         {
@@ -26,5 +24,7 @@ namespace NSE.Bff.Shopping.Services.Base
 
             return true;
         }
+
+        protected ResponseResult Ok() => new();
     }
 }

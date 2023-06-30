@@ -1,4 +1,4 @@
-﻿using NSE.WebApp.MVC.Models.Error;
+﻿using NSE.Core.Communication;
 
 namespace NSE.WebApp.MVC.Models.Identity
 {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
+using NSE.Core.Communication;
 using NSE.WebApp.MVC.Extensions;
-using NSE.WebApp.MVC.Models.Error;
 using NSE.WebApp.MVC.Models.Identity;
 using NSE.WebApp.MVC.Services.Base;
 using NSE.WebApp.MVC.Services.Interfaces;

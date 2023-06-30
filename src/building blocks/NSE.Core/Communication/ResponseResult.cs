@@ -1,4 +1,4 @@
-﻿namespace NSE.WebApp.MVC.Models.Error
+﻿namespace NSE.Core.Communication
 {
     public class ResponseResult
     {
