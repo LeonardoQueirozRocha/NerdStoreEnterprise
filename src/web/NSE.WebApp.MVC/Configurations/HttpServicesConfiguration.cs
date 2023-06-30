@@ -1,4 +1,4 @@
-﻿using NSE.WebApi.Core.Extensions;
+﻿using NSE.WebApp.MVC.Extensions;
 using NSE.WebApp.MVC.Services;
 using NSE.WebApp.MVC.Services.Handlers;
 using NSE.WebApp.MVC.Services.Interfaces;
