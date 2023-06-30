@@ -2,12 +2,6 @@
 using NSE.WebApi.Core.User;
 using NSE.WebApi.Core.User.Interfaces;
 using NSE.WebApp.MVC.Extensions.CustomDataAnnotations.CpfAnnotation;
-using NSE.WebApp.MVC.Services;
-using NSE.WebApp.MVC.Services.Handlers;
-using NSE.WebApp.MVC.Services.Interfaces;
-using Polly;
-using Polly.Extensions.Http;
-using Polly.Retry;
 
 namespace NSE.WebApp.MVC.Configurations
 {
@@ -18,52 +12,7 @@ namespace NSE.WebApp.MVC.Configurations
             services.AddSingleton<IValidationAttributeAdapterProvider, CpfValidationAttributeAdapterProvider>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IAspNetUser, AspNetUser>();
-
-            #region HttpServices
-
-            services.AddTransient<HttpClientAuthorizationDelegatingHandler>();
-
-            services.AddHttpClient<IAuthService, AuthService>()
-                    .AddPolicyHandler(PollyExtensions.RetryWait())
-                    .AddTransientHttpErrorPolicy(p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
-
-            services.AddHttpClient<ICatalogService, CatalogService>()
-                    .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
-                    .AddPolicyHandler(PollyExtensions.RetryWait())
-                    .AddTransientHttpErrorPolicy(p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
-
-            services.AddHttpClient<ICartService, CartService>()
-                    .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
-                    .AddPolicyHandler(PollyExtensions.RetryWait())
-                    .AddTransientHttpErrorPolicy(p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
-
-            #endregion
+            services.AddHttpServices();
         }
     }
-
-    #region PollyExtensions
-
-    public class PollyExtensions
-    {
-        public static AsyncRetryPolicy<HttpResponseMessage> RetryWait()
-        {
-            var retry = HttpPolicyExtensions
-                .HandleTransientHttpError()
-                .WaitAndRetryAsync(new[]
-                {
-                    TimeSpan.FromSeconds(1),
-                    TimeSpan.FromSeconds(5),
-                    TimeSpan.FromSeconds(10),
-                }, (outcome, timespan, retryCount, context) =>
-                {
-                    Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.WriteLine($"Tentando pela {retryCount} vez!");
-                    Console.ForegroundColor = ConsoleColor.White;
-                });
-
-            return retry;
-        }
-    }
-
-    #endregion
 }
