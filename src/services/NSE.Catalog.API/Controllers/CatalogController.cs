@@ -8,6 +8,7 @@ using NSE.WebApi.Core.Identity;
 namespace NSE.Catalog.API.Controllers
 {
     [Authorize]
+    [Route("catalog/products")]
     public class CatalogController : MainController
     {
         private readonly IProductRepository _productRepository;
@@ -18,14 +19,14 @@ namespace NSE.Catalog.API.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("catalog/products")]
+        [HttpGet]
         public async Task<IEnumerable<Product>> Index()
         {
             return await _productRepository.GetAllAsync();
         }
 
         [ClaimsAuthorize("Catalog", "Read")]
-        [HttpGet("catalog/products/{id:guid}")]
+        [HttpGet("{id:guid}")]
         public async Task<Product> ProductDetail(Guid id)
         {
             return await _productRepository.GetByIdAsync(id);

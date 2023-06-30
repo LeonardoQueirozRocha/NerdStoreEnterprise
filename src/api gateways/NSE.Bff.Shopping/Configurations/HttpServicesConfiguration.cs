@@ -1,20 +1,16 @@
-﻿using NSE.WebApi.Core.Extensions;
-using NSE.WebApp.MVC.Services;
-using NSE.WebApp.MVC.Services.Handlers;
-using NSE.WebApp.MVC.Services.Interfaces;
+﻿using NSE.Bff.Shopping.Extensions.Handlers;
+using NSE.Bff.Shopping.Services;
+using NSE.Bff.Shopping.Services.Interfaces;
+using NSE.WebApi.Core.Extensions;
 using Polly;
 
-namespace NSE.WebApp.MVC.Configurations
+namespace NSE.Bff.Shopping.Configurations
 {
     public static class HttpServicesConfiguration
     {
         public static void AddHttpServices(this IServiceCollection services)
         {
             services.AddTransient<HttpClientAuthorizationDelegatingHandler>();
-
-            services.AddHttpClient<IAuthService, AuthService>()
-                    .AddPolicyHandler(PollyExtension.RetryWait())
-                    .AddTransientHttpErrorPolicy(p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
 
             services.AddHttpClient<ICatalogService, CatalogService>()
                     .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()

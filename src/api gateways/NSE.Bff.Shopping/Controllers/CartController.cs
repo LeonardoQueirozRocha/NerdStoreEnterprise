@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NSE.Bff.Shopping.Models;
 using NSE.Bff.Shopping.Services.Interfaces;
 using NSE.WebApi.Core.Controllers;
 
@@ -21,31 +22,80 @@ namespace NSE.Bff.Shopping.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return CustomResponse();
+            return CustomResponse(await _cartService.GetCartAsync());
         }
 
         [HttpGet("cart-quantity")]
-        public async Task<IActionResult> GetCartQuantity()
+        public async Task<int> GetCartQuantity()
         {
-            return CustomResponse();
+            var cart = await _cartService.GetCartAsync();
+            return cart?.Items.Sum(i => i.Quantity) ?? 0;
         }
 
         [HttpPost("items")]
-        public async Task<IActionResult> AddCartItem()
+        public async Task<IActionResult> AddCartItem(CartItemDTO productItem)
         {
-            return CustomResponse();
+            var product = await _catalogService.GetByIdAsync(productItem.ProductId);
+
+            await ValidateCartItemAsync(product, productItem.Quantity);
+
+            if (!IsValid()) return CustomResponse();
+
+            productItem.Name = product.Name;
+            productItem.Value = product.Value;
+            productItem.Image = product.Image;
+
+            var response = await _cartService.AddCartItemAsync(productItem);
+
+            return CustomResponse(response);
         }
 
         [HttpPut("items/{productId:guid}")]
-        public async Task<IActionResult> UpdateCartItem()
+        public async Task<IActionResult> UpdateCartItem(Guid productId, CartItemDTO productItem)
         {
-            return CustomResponse();
+            var product = await _catalogService.GetByIdAsync(productId);
+
+            await ValidateCartItemAsync(product, productItem.Quantity);
+
+            if (!IsValid()) return CustomResponse();
+
+            var response = await _cartService.UpdateCartItemAsync(productId, productItem);
+
+            return CustomResponse(response);
         }
 
         [HttpDelete("items/{productId:guid}")]
-        public async Task<IActionResult> DeleteCartItem()
+        public async Task<IActionResult> DeleteCartItem(Guid productId)
         {
-            return CustomResponse();
+            var product = await _catalogService.GetByIdAsync(productId);
+
+            if (product == null)
+            {
+                AddProcessingError("Produto inexistente");
+                return CustomResponse();
+            }
+
+            var response = await _cartService.DeleteCartItemAsync(productId);
+
+            return CustomResponse(response);
+        }
+
+        private async Task ValidateCartItemAsync(ProductItemDTO product, int quantity)
+        {
+            if (product == null) AddProcessingError("Produto inexistente");
+            if (quantity < 1) AddProcessingError($"Escolha ao menos uma unidade do produto {product.Name}");
+
+            var cart = await _cartService.GetCartAsync();
+            var cartItem = cart.Items.FirstOrDefault(p => p.ProductId == product.Id);
+
+            if (cartItem != null && cartItem.Quantity + quantity > product.QuantityInStock)
+            {
+                AddProcessingError($"O produto {product.Name} possui {product.QuantityInStock} unidades em estoque, você selecionou {quantity}");
+                return;
+            }
+
+            if (quantity > product.QuantityInStock) AddProcessingError($"O produto {product.Name} possui {product.QuantityInStock} unidades em estoque, você selecionou {quantity}");
+
         }
     }
 }

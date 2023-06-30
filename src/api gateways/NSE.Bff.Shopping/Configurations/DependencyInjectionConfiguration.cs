@@ -9,6 +9,7 @@ namespace NSE.Bff.Shopping.Configurations
         {
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IAspNetUser, AspNetUser>();
+            services.AddHttpServices();
         }
     }
 }
