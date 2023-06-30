@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NSE.Bff.Shopping.Services.Interfaces;
 using NSE.WebApi.Core.Controllers;
 
 namespace NSE.Bff.Shopping.Controllers
@@ -8,6 +9,15 @@ namespace NSE.Bff.Shopping.Controllers
     [Route("shopping/cart")]
     public class CartController : MainController
     {
+        private readonly ICartService _cartService;
+        private readonly ICatalogService _catalogService;
+
+        public CartController(ICartService cartService, ICatalogService catalogService)
+        {
+            _cartService = cartService;
+            _catalogService = catalogService;
+        }
+
         [HttpGet]
         public async Task<IActionResult> Index()
         {

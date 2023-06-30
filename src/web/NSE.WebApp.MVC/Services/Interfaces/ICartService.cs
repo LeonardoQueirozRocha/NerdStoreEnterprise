@@ -1,5 +1,5 @@
-﻿using NSE.WebApp.MVC.Models.Cart;
-using NSE.WebApp.MVC.Models.Error;
+﻿using NSE.Core.Communication;
+using NSE.WebApp.MVC.Models.Cart;
 
 namespace NSE.WebApp.MVC.Services.Interfaces
 {
