@@ -1,6 +1,6 @@
 ﻿namespace NSE.WebApp.MVC.Models.Cart
 {
-    public class ProductItemViewModel
+    public class CartItemViewModel
     {
         public Guid ProductId { get; set; }
         public string Name { get; set; }

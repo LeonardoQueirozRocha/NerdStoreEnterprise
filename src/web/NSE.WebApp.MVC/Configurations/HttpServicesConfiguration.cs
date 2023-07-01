@@ -21,7 +21,7 @@ namespace NSE.WebApp.MVC.Configurations
                     .AddPolicyHandler(PollyExtension.RetryWait())
                     .AddTransientHttpErrorPolicy(p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
 
-            services.AddHttpClient<ICartService, CartService>()
+            services.AddHttpClient<IShoppingBffService, ShoppingBffService>()
                     .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
                     .AddPolicyHandler(PollyExtension.RetryWait())
                     .AddTransientHttpErrorPolicy(p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
