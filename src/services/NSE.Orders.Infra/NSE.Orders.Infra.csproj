@@ -16,10 +16,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Data\Mappings\" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="..\NSE.Orders.Domain\NSE.Orders.Domain.csproj" />
 	</ItemGroup>
 

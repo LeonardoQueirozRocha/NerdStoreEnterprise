@@ -4,5 +4,6 @@ namespace NSE.Orders.Domain.Vouchers
 {
     public interface IVoucherRepository : IRepository<Voucher>
     {
+        Task<Voucher> GetVoucherbyCodeAsync(string code);
     }
 }
