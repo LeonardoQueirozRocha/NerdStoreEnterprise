@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NSE.Core.Data;
 using NSE.Orders.Domain.Vouchers;
+using NSE.Orders.Domain.Vouchers.Interfaces;
 
 namespace NSE.Orders.Infra.Data.Repository
 {
