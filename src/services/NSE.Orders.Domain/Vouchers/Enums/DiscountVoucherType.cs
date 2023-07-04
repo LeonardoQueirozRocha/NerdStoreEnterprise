@@ -1,4 +1,4 @@
-﻿namespace NSE.Orders.Domain.Vouchers
+﻿namespace NSE.Orders.Domain.Vouchers.Enums
 {
     public enum DiscountVoucherType
     {
