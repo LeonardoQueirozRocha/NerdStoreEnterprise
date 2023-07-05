@@ -12,11 +12,16 @@ namespace NSE.Bff.Shopping.Controllers
     {
         private readonly ICartService _cartService;
         private readonly ICatalogService _catalogService;
+        private readonly IOrderService _orderService;
 
-        public CartController(ICartService cartService, ICatalogService catalogService)
+        public CartController(
+            ICartService cartService,
+            ICatalogService catalogService,
+            IOrderService orderService)
         {
             _cartService = cartService;
             _catalogService = catalogService;
+            _orderService = orderService;
         }
 
         [HttpGet]
@@ -76,6 +81,22 @@ namespace NSE.Bff.Shopping.Controllers
             }
 
             var response = await _cartService.DeleteCartItemAsync(productId);
+
+            return CustomResponse(response);
+        }
+
+        [HttpPost("apply-voucher")]
+        public async Task<IActionResult> ApplyVoucher([FromBody] string voucherCode)
+        {
+            var voucher = await _orderService.GetVoucherByCodeAsync(voucherCode);
+
+            if (voucher is null)
+            {
+                AddProcessingError("Voucher inválido ou não encontrado!");
+                return CustomResponse();
+            }
+
+            var response = await _cartService.ApplyCartVoucherAsync(voucher);
 
             return CustomResponse(response);
         }

@@ -56,5 +56,15 @@ namespace NSE.Bff.Shopping.Services
 
             return Ok();
         }
+
+        public async Task<ResponseResult> ApplyCartVoucherAsync(VoucherDTO voucher)
+        {
+            var itemContent = GetContent(voucher);
+            var response = await _httpClient.PostAsync("/cart/apply-voucher/", itemContent);
+
+            if (!HandleResponseErrors(response)) return await DeserializeResponseObject<ResponseResult>(response);
+
+            return Ok();
+        }
     }
 }
