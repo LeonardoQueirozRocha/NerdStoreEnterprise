@@ -39,7 +39,7 @@ namespace NSE.Cart.API.Controllers
 
             if (!IsValid()) return CustomResponse();
 
-            await SaveCartAsync();
+            await PersistDataAsync();
 
             return CustomResponse();
         }
@@ -76,6 +76,20 @@ namespace NSE.Cart.API.Controllers
             if (!IsValid()) return CustomResponse();
 
             await DeleteCartAsync(cartItem, cart);
+
+            return CustomResponse();
+        }
+
+        [HttpPost("apply-voucher")]
+        public async Task<IActionResult> ApplyVoucher(Voucher voucher)
+        {
+            var cart = await GetCustomerCartAsync();
+
+            cart.ApplyVoucher(voucher);
+
+            _context.CustomerCart.Update(cart);
+
+            await PersistDataAsync();
 
             return CustomResponse();
         }
@@ -148,7 +162,7 @@ namespace NSE.Cart.API.Controllers
             return false;
         }
 
-        private async Task SaveCartAsync()
+        private async Task PersistDataAsync()
         {
             var result = await _context.SaveChangesAsync();
 
@@ -159,7 +173,7 @@ namespace NSE.Cart.API.Controllers
         {
             _context.CartItems.Update(item);
             _context.CustomerCart.Update(cart);
-            await SaveCartAsync();
+            await PersistDataAsync();
         }
 
         private async Task DeleteCartAsync(CartItem item, CustomerCart cart)
@@ -169,7 +183,7 @@ namespace NSE.Cart.API.Controllers
             _context.CartItems.Remove(item);
             _context.CustomerCart.Update(cart);
 
-            await SaveCartAsync();
+            await PersistDataAsync();
         }
     }
 }

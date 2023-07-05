@@ -20,8 +20,15 @@ namespace NSE.Cart.API.Model
         public decimal TotalValue { get; set; }
         public List<CartItem> Items { get; set; } = new List<CartItem>();
         public ValidationResult ValidationResult { get; set; }
+        public bool UsedVoucher { get; set; }
+        public decimal Discount { get; set; }
+        public Voucher Voucher { get; set; }
 
-        internal void CalculateCartValue() => TotalValue = Items.Sum(p => p.CalculateValue());
+        internal void CalculateCartValue()
+        {
+            TotalValue = Items.Sum(p => p.CalculateValue());
+            CalculateTotalDiscountValue();
+        }
 
         internal bool CartItemExists(CartItem item) => Items.Any(p => p.ProductId == item.ProductId);
 
@@ -75,6 +82,41 @@ namespace NSE.Cart.API.Model
             ValidationResult = new ValidationResult(errors);
 
             return ValidationResult.IsValid;
+        }
+
+        public void ApplyVoucher(Voucher voucher)
+        {
+            Voucher = voucher;
+            UsedVoucher = true;
+            CalculateCartValue();
+        }
+
+        private void CalculateTotalDiscountValue()
+        {
+            if (!UsedVoucher) return;
+
+            decimal discount = 0;
+            var value = TotalValue;
+
+            if (Voucher.DiscountType == DiscountVoucherType.Percentage)
+            {
+                if (Voucher.Percentage.HasValue)
+                {
+                    discount = (value * Voucher.Percentage.Value) / 100;
+                    value -= discount;
+                }
+            }
+            else
+            {
+                if (Voucher.DiscountValue.HasValue)
+                {
+                    discount = Voucher.DiscountValue.Value;
+                    value -= discount;
+                }
+            }
+
+            TotalValue = value < 0 ? 0 : value;
+            Discount = discount;
         }
 
         public class CustomerCartValidator : AbstractValidator<CustomerCart>
