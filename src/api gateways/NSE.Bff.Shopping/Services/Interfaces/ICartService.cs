@@ -9,5 +9,6 @@ namespace NSE.Bff.Shopping.Services.Interfaces
         Task<ResponseResult> AddCartItemAsync(CartItemDTO product);
         Task<ResponseResult> UpdateCartItemAsync(Guid productId, CartItemDTO cart);
         Task<ResponseResult> DeleteCartItemAsync(Guid productId);
+        Task<ResponseResult> ApplyCartVoucherAsync(VoucherDTO voucher);
     }
 }
