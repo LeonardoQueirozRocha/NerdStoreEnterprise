@@ -28,7 +28,7 @@ namespace NSE.WebApp.MVC.Services
 
         public async Task<int> GetCartQuantityAsync()
         {
-            var response = await _httpClient.GetAsync("/shopping/cart/cart-quantity");
+            var response = await _httpClient.GetAsync("/shopping/cart/cart-quantity/");
 
             HandleResponseErrors(response);
 
@@ -58,6 +58,16 @@ namespace NSE.WebApp.MVC.Services
         public async Task<ResponseResult> RemoveCartItemAsync(Guid productId)
         {
             var response = await _httpClient.DeleteAsync($"/shopping/cart/items/{productId}");
+
+            if (!HandleResponseErrors(response)) return await DeserializeResponseObject<ResponseResult>(response);
+
+            return Ok();
+        }
+
+        public async Task<ResponseResult> ApplyCartVoucherAsync(string voucher)
+        {
+            var itemContent = GetContent(voucher);
+            var response = await _httpClient.PostAsync("/shopping/cart/apply-voucher", itemContent);
 
             if (!HandleResponseErrors(response)) return await DeserializeResponseObject<ResponseResult>(response);
 

@@ -10,5 +10,6 @@ namespace NSE.WebApp.MVC.Services.Interfaces
         Task<ResponseResult> AddCartItemAsync(CartItemViewModel product);
         Task<ResponseResult> UpdateCartItemAsync(Guid productId, CartItemViewModel product);
         Task<ResponseResult> RemoveCartItemAsync(Guid productId);
+        Task<ResponseResult> ApplyCartVoucherAsync(string voucher);
     }
 }
