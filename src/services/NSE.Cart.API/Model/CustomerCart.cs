@@ -27,7 +27,7 @@ namespace NSE.Cart.API.Model
         internal void CalculateCartValue()
         {
             TotalValue = Items.Sum(p => p.CalculateValue());
-            CalculateTotalDiscountValue();
+            CalculateDiscountTotalValue();
         }
 
         internal bool CartItemExists(CartItem item) => Items.Any(p => p.ProductId == item.ProductId);
@@ -91,7 +91,7 @@ namespace NSE.Cart.API.Model
             CalculateCartValue();
         }
 
-        private void CalculateTotalDiscountValue()
+        private void CalculateDiscountTotalValue()
         {
             if (!UsedVoucher) return;
 
