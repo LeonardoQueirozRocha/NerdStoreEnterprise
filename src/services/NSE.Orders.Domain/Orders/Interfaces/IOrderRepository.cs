@@ -11,6 +11,5 @@ namespace NSE.Orders.Domain.Orders.Interfaces
 
         Task<OrderItem> GetItemByIdAsync(Guid id);
         Task<OrderItem> GetItemByOrderAsync(Guid orderId, Guid productId);
-
     }
 }

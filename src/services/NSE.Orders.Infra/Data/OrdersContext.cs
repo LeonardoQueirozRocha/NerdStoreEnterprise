@@ -4,6 +4,7 @@ using NSE.Core.Data;
 using NSE.Core.DomainObjects;
 using NSE.Core.Mediator;
 using NSE.Core.Messages;
+using NSE.Orders.Domain.Orders;
 using NSE.Orders.Domain.Vouchers;
 
 namespace NSE.Orders.Infra.Data
@@ -18,22 +19,45 @@ namespace NSE.Orders.Infra.Data
         }
 
         public DbSet<Voucher> Vouchers { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<Order> Orders { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             foreach (var property in modelBuilder.Model
                 .GetEntityTypes()
-                .SelectMany(e => e.GetProperties().Where(p => p.ClrType == typeof(string))))
+                .SelectMany(e => e.GetProperties()
+                                  .Where(p => p.ClrType == typeof(string))))
                 property.SetColumnType("varchar(100)");
 
             modelBuilder.Ignore<ValidationResult>();
             modelBuilder.Ignore<Event>();
-
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(OrdersContext).Assembly);
+
+            foreach (var relationShip in modelBuilder.Model
+                .GetEntityTypes()
+                .SelectMany(e => e.GetForeignKeys()))
+                relationShip.DeleteBehavior = DeleteBehavior.ClientSetNull;
+
+            modelBuilder.HasSequence<int>("MySequence").StartsAt(1000).IncrementsBy(1);
+
+            base.OnModelCreating(modelBuilder);
         }
 
         public async Task<bool> Commit()
         {
+            foreach (var entry in ChangeTracker
+                .Entries()
+                .Where(entry => entry.Entity.GetType()
+                                            .GetProperty("CreationDate") != null))
+            {
+                if (entry.State == EntityState.Added)
+                    entry.Property("CreationDate").CurrentValue = DateTime.Now;
+
+                if (entry.State == EntityState.Modified)
+                    entry.Property("CreationDate").IsModified = false;
+            }
+
             var success = await base.SaveChangesAsync() > 0;
 
             if (success) await _mediatorHandler.PublishEventsAsync(this);
