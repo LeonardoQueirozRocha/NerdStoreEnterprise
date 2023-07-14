@@ -5,5 +5,6 @@ namespace NSE.Orders.Domain.Vouchers.Interfaces
     public interface IVoucherRepository : IRepository<Voucher>
     {
         Task<Voucher> GetVoucherbyCodeAsync(string code);
+        void Update(Voucher voucher);
     }
 }

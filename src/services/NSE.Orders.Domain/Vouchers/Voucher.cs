@@ -28,8 +28,18 @@ namespace NSE.Orders.Domain.Vouchers
         public void MarkAsUsed()
         {
             Active = false;
-            Used = false;
+            Used = true;
             Quantity = 0;
+            DateOfUse = DateTime.Now;
+        }
+
+        public void DebitQuantity()
+        {
+            Quantity -= 1;
+
+            if (Quantity >= 1) return;
+
+            MarkAsUsed();
         }
     }
 }
