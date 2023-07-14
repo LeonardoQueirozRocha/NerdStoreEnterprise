@@ -21,6 +21,11 @@ namespace NSE.Orders.Infra.Data.Repository
             return await _context.Vouchers.FirstOrDefaultAsync(p => p.Code == code);
         }
 
+        public void Update(Voucher voucher)
+        {
+            _context.Vouchers.Update(voucher);
+        }
+
         public void Dispose() => _context.Dispose();
     }
 }

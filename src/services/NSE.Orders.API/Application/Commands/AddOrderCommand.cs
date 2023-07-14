@@ -1,4 +1,5 @@
-﻿using NSE.Core.Messages;
+﻿using FluentValidation;
+using NSE.Core.Messages;
 using NSE.Orders.API.Application.DTOs;
 
 namespace NSE.Orders.API.Application.Commands
@@ -21,7 +22,48 @@ namespace NSE.Orders.API.Application.Commands
         // Card
         public string CardNumber { get; set; }
         public string CardName { get; set; }
-        public string Cardexpiration { get; set; }
+        public string CardExpiration { get; set; }
         public string CardCvv { get; set; }
+
+        public override bool IsValid()
+        {
+            ValidationResult = new AddOrderValidator().Validate(this);
+            return ValidationResult.IsValid;
+        }
+
+        public class AddOrderValidator : AbstractValidator<AddOrderCommand>
+        {
+            public AddOrderValidator()
+            {
+                RuleFor(c => c.CustomerId)
+                    .NotEqual(Guid.Empty)
+                        .WithMessage("Id do cliente inválido");
+
+                RuleFor(c => c.OrderItems.Count)
+                    .GreaterThan(0)
+                        .WithMessage("O pedido precisa ter no minimo 1 item");
+
+                RuleFor(c => c.TotalValue)
+                    .GreaterThan(0)
+                        .WithMessage("Valor do pedido inválido");
+
+                RuleFor(c => c.CardNumber)
+                    .CreditCard()
+                        .WithMessage("Número de cartão inválido");
+
+                RuleFor(c => c.CardName)
+                    .NotNull()
+                        .WithMessage("Nome do portador do cartão requerido");
+
+                RuleFor(c => c.CardCvv.Length)
+                    .GreaterThan(2)
+                    .LessThan(5)
+                        .WithMessage("O CVV do cartão precisa ter 3 ou 4 números.");
+
+                RuleFor(c => c.CardExpiration)
+                    .NotNull()
+                        .WithMessage("Data expiração do cartão requerida.");
+            }
+        }
     }
 }
