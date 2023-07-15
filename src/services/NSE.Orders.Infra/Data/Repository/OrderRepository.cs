@@ -2,6 +2,7 @@
 using NSE.Core.Data;
 using NSE.Orders.Domain.Orders;
 using NSE.Orders.Domain.Orders.Interfaces;
+using System.Data.Common;
 
 namespace NSE.Orders.Infra.Data.Repository
 {
@@ -16,12 +17,14 @@ namespace NSE.Orders.Infra.Data.Repository
 
         public IUnitOfWork UnitOfWork => _context;
 
+        public DbConnection GetConnection() => _context.Database.GetDbConnection();
+
         public async Task<Order> GetByIdAsync(Guid id)
         {
             return await _context.Orders.FindAsync(id);
         }
 
-        public async Task<IEnumerable<Order>> GetByCustomerIdAsync(Guid customerId)
+        public async Task<IEnumerable<Order>> GetListByCustomerIdAsync(Guid customerId)
         {
             return await _context.Orders
                 .Include(p => p.OrderItems)

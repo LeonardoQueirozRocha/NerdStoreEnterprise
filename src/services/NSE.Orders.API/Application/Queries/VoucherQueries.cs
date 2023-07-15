@@ -4,11 +4,11 @@ using NSE.Orders.Domain.Vouchers.Interfaces;
 
 namespace NSE.Orders.API.Application.Queries
 {
-    public class VoucherQuery : IVoucherQuery
+    public class VoucherQueries : IVoucherQueries
     {
         private readonly IVoucherRepository _voucherRepository;
 
-        public VoucherQuery(IVoucherRepository voucherRepository)
+        public VoucherQueries(IVoucherRepository voucherRepository)
         {
             _voucherRepository = voucherRepository;
         }
