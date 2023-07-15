@@ -2,7 +2,7 @@
 
 namespace NSE.Orders.API.Application.Queries.Interfaces
 {
-    public interface IVoucherQuery
+    public interface IVoucherQueries
     {
         Task<VoucherDTO> GetVoucherByCodeAsync(string code);
     }

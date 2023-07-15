@@ -11,9 +11,9 @@ namespace NSE.Orders.API.Controllers
     [Route("vouchers")]
     public class VoucherController : MainController
     {
-        private readonly IVoucherQuery _voucherQuery;
+        private readonly IVoucherQueries _voucherQuery;
 
-        public VoucherController(IVoucherQuery voucherQuery)
+        public VoucherController(IVoucherQueries voucherQuery)
         {
             _voucherQuery = voucherQuery;
         }

@@ -17,7 +17,7 @@ namespace NSE.Orders.API.Configuration
             services.AddScoped<IAspNetUser, AspNetUser>();
 
             services.AddScoped<IMediatorHandler, MediatorHandler>();
-            services.AddScoped<IVoucherQuery, VoucherQuery>();
+            services.AddScoped<IVoucherQueries, VoucherQueries>();
 
             services.AddScoped<IVoucherRepository, VoucherRepository>();
             services.AddScoped<OrdersContext>();
