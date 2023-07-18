@@ -31,6 +31,16 @@ namespace NSE.Customers.API.Data.Repositories
             _context.Customers.Add(customer);
         }
 
+        public async Task<Address> GetAddressByIdAsync(Guid id)
+        {
+            return await _context.Addresses.FirstOrDefaultAsync(e => e.CustomerId == id);
+        }
+
+        public void AddAddress(Address address)
+        {
+            _context.Addresses.Add(address);
+        }
+
         public void Dispose()
         {
             _context.Dispose();
