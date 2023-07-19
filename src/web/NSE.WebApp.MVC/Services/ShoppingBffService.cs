@@ -2,6 +2,8 @@
 using NSE.Core.Communication;
 using NSE.WebApp.MVC.Extensions;
 using NSE.WebApp.MVC.Models.Cart;
+using NSE.WebApp.MVC.Models.Customer;
+using NSE.WebApp.MVC.Models.Order;
 using NSE.WebApp.MVC.Services.Base;
 using NSE.WebApp.MVC.Services.Interfaces;
 
@@ -72,6 +74,34 @@ namespace NSE.WebApp.MVC.Services
             if (!HandleResponseErrors(response)) return await DeserializeResponseObject<ResponseResult>(response);
 
             return Ok();
+        }
+
+        public OrderTransactionViewModel MapForOrder(CartViewModel cart, AddressViewModel address)
+        {
+            var order = new OrderTransactionViewModel
+            {
+                TotalValue = cart.TotalValue,
+                Items = cart.Items,
+                Discount = cart.Discount,
+                UsedVoucher = cart.UsedVoucher,
+                VoucherCode = cart.Voucher?.Code
+            };
+
+            if (address != null)
+            {
+                order.Address = new AddressViewModel
+                {
+                    PublicArea = address.PublicArea,
+                    Number = address.Number,
+                    Neightborhood = address.Neightborhood,
+                    ZipCode = address.ZipCode,
+                    Complement = address.Complement,
+                    City = address.City,
+                    State = address.State,
+                };
+            }
+
+            return order;
         }
     }
 }

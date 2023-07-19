@@ -16,7 +16,7 @@ namespace NSE.Customers.API.Models
         // EF Relation
         public Customer Customer { get; private set; }
 
-        public Address(string publicArea, string number, string complement, string neighborhood, string zipCode, string city, string state)
+        public Address(string publicArea, string number, string complement, string neighborhood, string zipCode, string city, string state, Guid customerId)
         {
             PublicArea = publicArea;
             Number = number;
@@ -25,6 +25,7 @@ namespace NSE.Customers.API.Models
             ZipCode = zipCode;
             City = city;
             State = state;
+            CustomerId = customerId;
         }
     }
 }

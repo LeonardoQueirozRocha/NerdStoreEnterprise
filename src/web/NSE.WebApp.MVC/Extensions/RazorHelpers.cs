@@ -20,6 +20,11 @@ namespace NSE.WebApp.MVC.Extensions
 
         public static string FormatCurrency(this RazorPage page, decimal currency)
         {
+            return FormatCurrency(currency);
+        }
+
+        private static string FormatCurrency(decimal currency)
+        {
             return currency > 0 ? string.Format(Thread.CurrentThread.CurrentCulture, "{0:C}", currency) : "Gratuito";
         }
 
@@ -44,6 +49,11 @@ namespace NSE.WebApp.MVC.Extensions
             }
 
             return sb.ToString();
+        }
+
+        public static string UnitsPerProductTotalValue(this RazorPage page, int units, decimal value)
+        {
+            return $"{units}x {FormatCurrency(value)} = Total: {FormatCurrency(value * units)}";
         }
     }
 }
