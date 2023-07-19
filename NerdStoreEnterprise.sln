@@ -57,9 +57,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NSE.Bff.Shopping", "src\api
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NSE.Orders.API", "src\services\NSE.Orders.API\NSE.Orders.API.csproj", "{5B896AAA-4433-4829-9557-7B9D31EAD0D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NSE.Orders.Domain", "src\services\NSE.Orders.Domain\NSE.Orders.Domain.csproj", "{A3EA403D-0D88-4E56-A6D8-81C60B0B5754}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NSE.Orders.Domain", "src\services\NSE.Orders.Domain\NSE.Orders.Domain.csproj", "{A3EA403D-0D88-4E56-A6D8-81C60B0B5754}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NSE.Orders.Infra", "src\services\NSE.Orders.Infra\NSE.Orders.Infra.csproj", "{DFC199BD-2043-493E-A00F-F913DE6E6D6D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NSE.Orders.Infra", "src\services\NSE.Orders.Infra\NSE.Orders.Infra.csproj", "{DFC199BD-2043-493E-A00F-F913DE6E6D6D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

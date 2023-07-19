@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NSE.Core.Mediator;
+using NSE.Customers.API.Application.Commands;
 using NSE.Customers.API.Models.Interfaces;
 using NSE.WebApi.Core.Controllers;
 using NSE.WebApi.Core.User.Interfaces;
@@ -30,6 +31,7 @@ namespace NSE.Customers.API.Controllers
             return address == null ? NotFound() : CustomResponse(address);
         }
 
+        [HttpPost("addresses")]
         public async Task<IActionResult> AddAddress(AddAddressCommand address)
         {
             address.CustomerId = _user.GetUserId();
