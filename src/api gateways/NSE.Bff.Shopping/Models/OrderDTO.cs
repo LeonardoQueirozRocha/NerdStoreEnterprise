@@ -1,24 +1,29 @@
 ﻿using NSE.Core.Validations;
-using NSE.WebApp.MVC.Models.Cart;
-using NSE.WebApp.MVC.Models.Customer;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace NSE.WebApp.MVC.Models.Order
+namespace NSE.Bff.Shopping.Models
 {
-    public class OrderTransactionViewModel
+    public class OrderDTO
     {
         #region Order
+        public int Code { get; set; }
+        //Authorized = 1,
+        //Paid = 2,
+        //Refused = 3,
+        //Delivered = 4,
+        //Canceled = 5
+        public int Status { get; set; }
+        public DateTime Date { get; set; }
         public decimal TotalValue { get; set; }
         public decimal Discount { get; set; }
         public string VoucherCode { get; set; }
         public bool UsedVoucher { get; set; }
-
-        public List<CartItemViewModel> Items { get; set; } = new List<CartItemViewModel>();
+        public List<CartItemDTO> OrderItems { get; set; }
         #endregion
 
         #region Address
-        public AddressViewModel Address { get; set; }
+        public AddressDTO Address { get; set; }
         #endregion
 
         #region Card

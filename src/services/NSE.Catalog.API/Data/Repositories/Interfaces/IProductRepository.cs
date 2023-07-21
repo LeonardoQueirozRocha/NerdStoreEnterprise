@@ -7,6 +7,7 @@ namespace NSE.Catalog.API.Data.Repositories.Interfaces
     {
         Task<IEnumerable<Product>> GetAllAsync();
         Task<Product> GetByIdAsync(Guid id);
+        Task<List<Product>> GetProductsByIdAsync(string ids);
 
         void Add(Product product);
         void Update(Product product);
