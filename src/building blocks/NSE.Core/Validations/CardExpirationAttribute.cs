@@ -14,7 +14,7 @@ namespace NSE.Core.Validations
 
             if (int.TryParse(month, out var parsedMonth) && int.TryParse(year, out var parsedYear))
             {
-                var day = new DateTime(parsedMonth, parsedYear, 1);
+                var day = new DateTime(parsedYear, parsedMonth, 1);
                 return day > DateTime.UtcNow;
             }
 

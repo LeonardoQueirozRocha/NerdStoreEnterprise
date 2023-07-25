@@ -33,7 +33,7 @@ namespace NSE.Bff.Shopping.Models
 
         [Required(ErrorMessage = "Informe o nome do portador do cartão")]
         [Display(Name = "Nome do Portador")]
-        public string CarddName { get; set; }
+        public string CardName { get; set; }
 
         [RegularExpression(@"(0[1-9]|1[0-2])\/[0-9]{2}", ErrorMessage = "O vencimento deve estar no padrão MM/AA")]
         [CardExpiration(ErrorMessage = "Cartão Expirado")]

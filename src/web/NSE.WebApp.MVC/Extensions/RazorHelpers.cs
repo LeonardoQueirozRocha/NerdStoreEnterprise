@@ -55,5 +55,37 @@ namespace NSE.WebApp.MVC.Extensions
         {
             return $"{units}x {FormatCurrency(value)} = Total: {FormatCurrency(value * units)}";
         }
+
+        public static string ShowStatus(this RazorPage page, int status)
+        {
+            var statusMessage = string.Empty;
+            var StatusClass = string.Empty;
+
+            switch (status)
+            {
+                case 1:
+                    StatusClass = "info";
+                    statusMessage = "Em aprovação";
+                    break;
+                case 2:
+                    StatusClass = "primary";
+                    statusMessage = "Aprovado";
+                    break;
+                case 3:
+                    StatusClass = "danger";
+                    statusMessage = "Recusado";
+                    break;
+                case 4:
+                    StatusClass = "success";
+                    statusMessage = "Entregue";
+                    break;
+                case 5:
+                    StatusClass = "warning";
+                    statusMessage = "Cancelado";
+                    break;
+            }
+
+            return $"<span class='badge badge-{StatusClass}'>{statusMessage}</span>";
+        }
     }
 }

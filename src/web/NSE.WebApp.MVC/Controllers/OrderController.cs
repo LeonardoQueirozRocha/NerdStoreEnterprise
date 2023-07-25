@@ -2,7 +2,6 @@
 using NSE.WebApi.Core.Controllers;
 using NSE.WebApp.MVC.Models.Order;
 using NSE.WebApp.MVC.Services.Interfaces;
-using System.Diagnostics.Contracts;
 
 namespace NSE.WebApp.MVC.Controllers
 {
@@ -48,7 +47,7 @@ namespace NSE.WebApp.MVC.Controllers
 
         [HttpPost]
         [Route("complete-order")]
-        public async Task<IActionResult> CompleteOrder(OrderTransactionViewModel orderTransaction)
+        public async Task<IActionResult> CompleteOrder([FromForm] OrderTransactionViewModel orderTransaction)
         {
             if (!ModelState.IsValid)
                 return View("Payment", _shoppingBffService.MapForOrder(await _shoppingBffService.GetCartAsync(), null));
@@ -73,7 +72,7 @@ namespace NSE.WebApp.MVC.Controllers
         [Route("completed-order")]
         public async Task<IActionResult> CompletedOrder()
         {
-            return View("OrderConfirmation", await _shoppingBffService.GetLastOrderAsync());
+            return View("ConfirmationOrder", await _shoppingBffService.GetLastOrderAsync());
         }
 
         [HttpGet("my-orders")]

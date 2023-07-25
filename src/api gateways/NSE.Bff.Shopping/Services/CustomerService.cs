@@ -19,7 +19,7 @@ namespace NSE.Bff.Shopping.Services
 
         public async Task<AddressDTO> GetAddressAsync()
         {
-            var response = await _httpClient.GetAsync("/custoemrs/addresses/");
+            var response = await _httpClient.GetAsync("/customers/addresses/");
 
             if (response.StatusCode == HttpStatusCode.NotFound) return null;
 

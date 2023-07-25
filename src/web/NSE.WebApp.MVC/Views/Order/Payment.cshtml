@@ -63,16 +63,16 @@
 
                     <partial name="_FinantialSummary" model="Model" />
 
-                    <form asp-action="ConcludeOrder" asp-controller="Order">
+                    <form asp-action="CompleteOrder" asp-controller="Order">
                         <article class="card-body border-top">
 
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-4 col-sm-12">
                                         <div class="form-group">
-                                            <label asp-for="CarddName"></label>
-                                            <input asp-for="CarddName" class="form-control" />
-                                            <span asp-validation-for="CarddName" class="text-danger"></span>
+                                            <label asp-for="CardName"></label>
+                                            <input asp-for="CardName" class="form-control" />
+                                            <span asp-validation-for="CardName" class="text-danger"></span>
                                         </div>
                                     </div>
                                     <div class="col-md-4 col-sm-12">
