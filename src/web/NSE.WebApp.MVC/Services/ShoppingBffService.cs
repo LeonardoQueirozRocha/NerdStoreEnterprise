@@ -122,9 +122,9 @@ namespace NSE.WebApp.MVC.Services
             {
                 order.Address = new AddressViewModel
                 {
-                    PublicArea = address.PublicArea,
+                    PublicPlace = address.PublicPlace,
                     Number = address.Number,
-                    Neightborhood = address.Neightborhood,
+                    Neighborhood = address.Neighborhood,
                     ZipCode = address.ZipCode,
                     Complement = address.Complement,
                     City = address.City,

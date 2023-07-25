@@ -10,7 +10,7 @@ namespace NSE.Customers.API.Data.Mappings
         {
             builder.HasKey(c => c.Id);
 
-            builder.Property(c => c.PublicArea)
+            builder.Property(c => c.PublicPlace)
                 .IsRequired()
                 .HasColumnType("varchar(200)");
 

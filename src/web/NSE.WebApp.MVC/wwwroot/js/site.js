@@ -3,8 +3,8 @@
 
         function clean_zipCode_form() {
             // Limpa valores do formulário de cep.
-            $("#Address_PublicArea").val("");
-            $("#Address_Neightborhood").val("");
+            $("#Address_PublicPlace").val("");
+            $("#Address_Neighborhood").val("");
             $("#Address_City").val("");
             $("#Address_State").val("");
         }
@@ -25,8 +25,8 @@
                 if (validacep.test(cep)) {
 
                     //Preenche os campos com "..." enquanto consulta webservice.
-                    $("#Address_PublicArea").val("...");
-                    $("#Address_Neightborhood").val("...");
+                    $("#Address_PublicPlace").val("...");
+                    $("#Address_Neighborhood").val("...");
                     $("#Address_City").val("...");
                     $("#Address_State").val("...");
 
@@ -36,8 +36,8 @@
 
                             if (!("erro" in dados)) {
                                 //Atualiza os campos com os valores da consulta.
-                                $("#Address_PublicArea").val(dados.logradouro);
-                                $("#Address_Neightborhood").val(dados.bairro);
+                                $("#Address_PublicPlace").val(dados.logradouro);
+                                $("#Address_Neighborhood").val(dados.bairro);
                                 $("#Address_City").val(dados.localidade);
                                 $("#Address_State").val(dados.uf);
                             } //end if.

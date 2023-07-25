@@ -4,7 +4,7 @@ namespace NSE.Customers.API.Models
 {
     public class Address : Entity
     {
-        public string PublicArea { get; private set; }
+        public string PublicPlace { get; private set; }
         public string Number { get; private set; }
         public string Complement { get; private set; }
         public string Neighborhood { get; private set; }
@@ -16,9 +16,9 @@ namespace NSE.Customers.API.Models
         // EF Relation
         public Customer Customer { get; private set; }
 
-        public Address(string publicArea, string number, string complement, string neighborhood, string zipCode, string city, string state, Guid customerId)
+        public Address(string publicPlace, string number, string complement, string neighborhood, string zipCode, string city, string state, Guid customerId)
         {
-            PublicArea = publicArea;
+            PublicPlace = publicPlace;
             Number = number;
             Complement = complement;
             Neighborhood = neighborhood;
