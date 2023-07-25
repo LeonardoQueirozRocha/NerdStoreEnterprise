@@ -7,7 +7,7 @@ namespace NSE.WebApp.MVC.Models.Customer
     {
         [Required]
         [DisplayName("Logradouro")]
-        public string PublicArea { get; set; }
+        public string PublicPlace { get; set; }
 
         [Required]
         [DisplayName("Número")]
@@ -18,7 +18,7 @@ namespace NSE.WebApp.MVC.Models.Customer
 
         [Required]
         [DisplayName("Bairro")]
-        public string Neightborhood { get; set; }
+        public string Neighborhood { get; set; }
 
         [Required]
         [DisplayName("CEP")]
@@ -34,7 +34,7 @@ namespace NSE.WebApp.MVC.Models.Customer
 
         public override string ToString()
         {
-            return $"{PublicArea}, {Number} {Complement} - {Neightborhood} - {City} - {State}";
+            return $"{PublicPlace}, {Number} {Complement} - {Neighborhood} - {City} - {State}";
         }
     }
 }

@@ -22,7 +22,7 @@ namespace NSE.Orders.API.Application.Commands
         // Card
         public string CardNumber { get; set; }
         public string CardName { get; set; }
-        public string CardExpiration { get; set; }
+        public string CardExpirationDate { get; set; }
         public string CardCvv { get; set; }
 
         public override bool IsValid()
@@ -60,7 +60,7 @@ namespace NSE.Orders.API.Application.Commands
                     .LessThan(5)
                         .WithMessage("O CVV do cartão precisa ter 3 ou 4 números.");
 
-                RuleFor(c => c.CardExpiration)
+                RuleFor(c => c.CardExpirationDate)
                     .NotNull()
                         .WithMessage("Data expiração do cartão requerida.");
             }

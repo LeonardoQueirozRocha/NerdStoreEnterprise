@@ -18,7 +18,7 @@ namespace NSE.WebApp.MVC.Controllers
 
         [Route("new-address")]
         [HttpPost]
-        public async Task<IActionResult> NewAddress(AddressViewModel address)
+        public async Task<IActionResult> NewAddress([FromForm] AddressViewModel address)
         {
             var response = await _customerService.AddAddressAsync(address);
 

@@ -19,6 +19,7 @@ namespace NSE.WebApp.MVC.Services
             _httpClient.BaseAddress = new Uri(settings.Value.ShoppingBffUrl);
         }
 
+        #region Cart
         public async Task<CartViewModel> GetCartAsync()
         {
             var response = await _httpClient.GetAsync("/shopping/cart/");
@@ -75,6 +76,36 @@ namespace NSE.WebApp.MVC.Services
 
             return Ok();
         }
+        #endregion
+
+        #region Order
+        public async Task<ResponseResult> CompleteOrderAsync(OrderTransactionViewModel orderTransaction)
+        {
+            var orderContent = GetContent(orderTransaction);
+            var response = await _httpClient.PostAsync("/shopping/orders/", orderContent);
+
+            if (!HandleResponseErrors(response)) return await DeserializeResponseObject<ResponseResult>(response);
+
+            return Ok();
+        }
+
+        public async Task<OrderViewModel> GetLastOrderAsync()
+        {
+            var response = await _httpClient.GetAsync("/shopping/orders/last/");
+
+            HandleResponseErrors(response);
+
+            return await DeserializeResponseObject<OrderViewModel>(response);
+        }
+
+        public async Task<IEnumerable<OrderViewModel>> GetListByCustomerIdAsync()
+        {
+            var response = await _httpClient.GetAsync("/shopping/orders/customer-list");
+
+            HandleResponseErrors(response);
+
+            return await DeserializeResponseObject<IEnumerable<OrderViewModel>>(response);
+        }
 
         public OrderTransactionViewModel MapForOrder(CartViewModel cart, AddressViewModel address)
         {
@@ -91,9 +122,9 @@ namespace NSE.WebApp.MVC.Services
             {
                 order.Address = new AddressViewModel
                 {
-                    PublicArea = address.PublicArea,
+                    PublicPlace = address.PublicPlace,
                     Number = address.Number,
-                    Neightborhood = address.Neightborhood,
+                    Neighborhood = address.Neighborhood,
                     ZipCode = address.ZipCode,
                     Complement = address.Complement,
                     City = address.City,
@@ -103,5 +134,6 @@ namespace NSE.WebApp.MVC.Services
 
             return order;
         }
+        #endregion
     }
 }

@@ -38,7 +38,7 @@ namespace NSE.Orders.API.Controllers
             return order == null ? NotFound() : CustomResponse(order);
         }
 
-        [HttpGet("list-customer")]
+        [HttpGet("customer-list")]
         public async Task<IActionResult> ListByCustomer()
         {
             var orders = await _orderQueries.GetListByCustomerIdAsync(_user.GetUserId());
