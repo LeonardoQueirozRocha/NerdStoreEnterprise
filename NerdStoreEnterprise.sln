@@ -61,6 +61,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NSE.Orders.Domain", "src\se
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NSE.Orders.Infra", "src\services\NSE.Orders.Infra\NSE.Orders.Infra.csproj", "{DFC199BD-2043-493E-A00F-F913DE6E6D6D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NSE.Payments.NerdsPay", "src\services\NSE.Payments.NerdsPay\NSE.Payments.NerdsPay.csproj", "{4B38841E-47EA-4E5C-A15C-D5AFF8111E42}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -119,6 +121,10 @@ Global
 		{DFC199BD-2043-493E-A00F-F913DE6E6D6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DFC199BD-2043-493E-A00F-F913DE6E6D6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DFC199BD-2043-493E-A00F-F913DE6E6D6D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B38841E-47EA-4E5C-A15C-D5AFF8111E42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B38841E-47EA-4E5C-A15C-D5AFF8111E42}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B38841E-47EA-4E5C-A15C-D5AFF8111E42}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B38841E-47EA-4E5C-A15C-D5AFF8111E42}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -152,6 +158,7 @@ Global
 		{5B896AAA-4433-4829-9557-7B9D31EAD0D9} = {6A298574-0EAC-4D4B-823D-BA7226522821}
 		{A3EA403D-0D88-4E56-A6D8-81C60B0B5754} = {6A298574-0EAC-4D4B-823D-BA7226522821}
 		{DFC199BD-2043-493E-A00F-F913DE6E6D6D} = {6A298574-0EAC-4D4B-823D-BA7226522821}
+		{4B38841E-47EA-4E5C-A15C-D5AFF8111E42} = {E64FBA5B-3428-45E7-BF5D-BFC4764F7342}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B17F97C8-F97C-496A-8D61-6143B9B85C5D}
