@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NSE.WebApi.Core.Controllers;
+using NSE.WebApp.MVC.Controllers.Base;
 using NSE.WebApp.MVC.Models.Order;
 using NSE.WebApp.MVC.Services.Interfaces;
 
@@ -47,7 +47,7 @@ namespace NSE.WebApp.MVC.Controllers
 
         [HttpPost]
         [Route("complete-order")]
-        public async Task<IActionResult> CompleteOrder([FromForm] OrderTransactionViewModel orderTransaction)
+        public async Task<IActionResult> CompleteOrder(OrderTransactionViewModel orderTransaction)
         {
             if (!ModelState.IsValid)
                 return View("Payment", _shoppingBffService.MapForOrder(await _shoppingBffService.GetCartAsync(), null));
@@ -62,7 +62,7 @@ namespace NSE.WebApp.MVC.Controllers
 
                 var order = _shoppingBffService.MapForOrder(cart, null);
 
-                return View(order);
+                return View("Payment", order);
             }
 
             return RedirectToAction("CompletedOrder");
