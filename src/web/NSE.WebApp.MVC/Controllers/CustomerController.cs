@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NSE.WebApi.Core.Controllers;
+using NSE.WebApp.MVC.Controllers.Base;
 using NSE.WebApp.MVC.Models.Customer;
 using NSE.WebApp.MVC.Services.Interfaces;
 
@@ -18,7 +18,7 @@ namespace NSE.WebApp.MVC.Controllers
 
         [Route("new-address")]
         [HttpPost]
-        public async Task<IActionResult> NewAddress([FromForm] AddressViewModel address)
+        public async Task<IActionResult> NewAddress(AddressViewModel address)
         {
             var response = await _customerService.AddAddressAsync(address);
 
