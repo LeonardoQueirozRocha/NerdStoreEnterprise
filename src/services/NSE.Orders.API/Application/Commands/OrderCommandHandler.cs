@@ -1,6 +1,8 @@
 ﻿using FluentValidation.Results;
 using MediatR;
 using NSE.Core.Messages;
+using NSE.Core.Messages.Integrations;
+using NSE.MessageBus.Interfaces;
 using NSE.Orders.API.Application.DTOs;
 using NSE.Orders.API.Application.Events;
 using NSE.Orders.Domain.Orders;
@@ -14,13 +16,16 @@ namespace NSE.Orders.API.Application.Commands
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IVoucherRepository _voucherRepository;
+        private readonly IMessageBus _bus;
 
         public OrderCommandHandler(
             IOrderRepository orderRepository,
-            IVoucherRepository voucherRepository)
+            IVoucherRepository voucherRepository,
+            IMessageBus bus)
         {
             _orderRepository = orderRepository;
             _voucherRepository = voucherRepository;
+            _bus = bus;
         }
 
         public async Task<ValidationResult> Handle(AddOrderCommand message, CancellationToken cancellationToken)
@@ -114,14 +119,32 @@ namespace NSE.Orders.API.Application.Commands
             return true;
         }
 
-        public bool ProcessPayment(Order order)
+        private async Task<bool> ProcessPaymentAsync(Order order, AddOrderCommand message)
         {
-            return true;
+            var startedOrder = new StartedOrderIntegrationEvent
+            {
+                OrderId = order.Id,
+                CustomerId = order.CustomerId,
+                Value = order.TotalValue,
+                PaymentType = 1,
+                CardName = message.CardName,
+                CardNumber = message.CardNumber,
+                CardExpirationDate = message.CardExpirationDate,
+                CardCvv = message.CardCvv,
+            };
+
+            var result = await _bus.RequestAsync<StartedOrderIntegrationEvent, ResponseMessage>(startedOrder);
+
+            if (result.ValidationResult.IsValid) return true;
+
+            result.ValidationResult.Errors.ForEach(error => AddError(error.ErrorMessage));
+
+            return false;
         }
 
         private async Task<bool> CanOrderBeProcessedAsync(AddOrderCommand message, Order order)
         {
-            return !await ApplyVoucherAsync(message, order) || !ValidateOrder(order) || !ProcessPayment(order);
+            return !await ApplyVoucherAsync(message, order) || !ValidateOrder(order) || !await ProcessPaymentAsync(order, message);
         }
     }
 }
