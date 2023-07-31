@@ -40,7 +40,6 @@ namespace NSE.Customers.API.Data
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(CustomerContext).Assembly);
         }
 
-
         public async Task<bool> Commit()
         {
             var success = await base.SaveChangesAsync() > 0;
