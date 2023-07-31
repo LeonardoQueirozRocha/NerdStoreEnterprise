@@ -1,4 +1,6 @@
-﻿using NSE.WebApi.Core.Identity;
+﻿using Microsoft.EntityFrameworkCore;
+using NSE.Payment.API.Data;
+using NSE.WebApi.Core.Identity;
 
 namespace NSE.Payment.API.Configurations
 {
@@ -6,6 +8,9 @@ namespace NSE.Payment.API.Configurations
     {
         public static void AddApiConfiguration(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddDbContext<PaymentContext>(options =>
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
             services.AddControllers();
 
             services.AddCors(options =>
