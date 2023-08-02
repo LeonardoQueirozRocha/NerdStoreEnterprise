@@ -19,6 +19,8 @@ builder.Services.AddSwaggerConfiguration();
 
 builder.Services.AddServices();
 
+builder.Services.AddMessageBusConfiguration(builder.Configuration);
+
 var app = builder.Build();
 
 app.UseSwaggerConfiguration();
