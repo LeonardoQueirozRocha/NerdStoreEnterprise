@@ -3,69 +3,81 @@ using NSE.Orders.API.Application.DTOs;
 using NSE.Orders.API.Application.Queries.Interfaces;
 using NSE.Orders.Domain.Orders.Interfaces;
 
-namespace NSE.Orders.API.Application.Queries
+namespace NSE.Orders.API.Application.Queries;
+
+public class OrderQueries : IOrderQueries
 {
-    public class OrderQueries : IOrderQueries
+    private readonly IOrderRepository _orderRepository;
+
+    public OrderQueries(IOrderRepository orderRepository)
     {
-        private readonly IOrderRepository _orderRepository;
+        _orderRepository = orderRepository;
+    }
 
-        public OrderQueries(IOrderRepository orderRepository)
-        {
-            _orderRepository = orderRepository;
-        }
+    public async Task<OrderDTO> GetLastOrderAsync(Guid customerId)
+    {
+        var order = await _orderRepository
+            .GetConnection()
+                .QueryAsync<dynamic>(SqlQueries.SELECT_LAST_ORDER, new { customerId });
 
-        public async Task<OrderDTO> GetLastOrderAsync(Guid customerId)
-        {
-            var order = await _orderRepository
-                .GetConnection()
-                    .QueryAsync<dynamic>(SqlQueries.SELECT_LAST_ORDER, new { customerId });
+        return OrderMap(order);
+    }
 
-            return OrderMap(order);
-        }
+    public async Task<IEnumerable<OrderDTO>> GetListByCustomerIdAsync(Guid customerId)
+    {
+        var orders = await _orderRepository.GetListByCustomerIdAsync(customerId);
 
-        public async Task<IEnumerable<OrderDTO>> GetListByCustomerIdAsync(Guid customerId)
-        {
-            var orders = await _orderRepository.GetListByCustomerIdAsync(customerId);
+        return orders.Select(OrderDTO.ForOrderDTO);
+    }
 
-            return orders.Select(OrderDTO.ForOrderDTO);
-        }
-
-        private static OrderDTO OrderMap(dynamic result)
-        {
-            var order = new OrderDTO
-            {
-                Code = result[0].Code,
-                Status = result[0].OrderStatus,
-                TotalValue = result[0].TotalValue,
-                Discount = result[0].Discount,
-                UsedVoucher = result[0].UsedVoucher,
-                OrderItems = new List<OrderItemDTO>(),
-                Address = new AddressDTO
+    public async Task<OrderDTO> GetAuthorizedOrdersAsync()
+    {
+        var order = await _orderRepository
+            .GetConnection()
+                .QueryAsync<OrderDTO, OrderItemDTO, OrderDTO>(SqlQueries.SELECT_AUTHORIZED_ORDER, (o, oi) =>
                 {
-                    PublicPlace = result[0].PublicPlace,
-                    Neighborhood = result[0].Neighborhood,
-                    ZipCode = result[0].ZipCode,
-                    City = result[0].City,
-                    Complement = result[0].Complement,
-                    State = result[0].State,
-                    Number = result[0].Number,
-                }
+                    o.OrderItems = new List<OrderItemDTO> { oi };
+                    return o;
+                }, splitOn: "OrderId, OrderItemId");
+
+        return order.FirstOrDefault();
+    }
+
+    private static OrderDTO OrderMap(dynamic result)
+    {
+        var order = new OrderDTO
+        {
+            Code = result[0].Code,
+            Status = result[0].OrderStatus,
+            TotalValue = result[0].TotalValue,
+            Discount = result[0].Discount,
+            UsedVoucher = result[0].UsedVoucher,
+            OrderItems = new List<OrderItemDTO>(),
+            Address = new AddressDTO
+            {
+                PublicPlace = result[0].PublicPlace,
+                Neighborhood = result[0].Neighborhood,
+                ZipCode = result[0].ZipCode,
+                City = result[0].City,
+                Complement = result[0].Complement,
+                State = result[0].State,
+                Number = result[0].Number,
+            }
+        };
+
+        foreach (var item in result)
+        {
+            var orderItem = new OrderItemDTO
+            {
+                Name = item.Name,
+                Value = item.UnitValue,
+                Quantity = item.Quantity,
+                Image = item.ProductImage
             };
 
-            foreach (var item in result)
-            {
-                var orderItem = new OrderItemDTO
-                {
-                    Name = item.Name,
-                    Value = item.UnitValue,
-                    Quantity = item.Quantity,
-                    Image = item.ProductImage
-                };
-
-                order.OrderItems.Add(orderItem);
-            }
-
-            return order;
+            order.OrderItems.Add(orderItem);
         }
+
+        return order;
     }
 }
