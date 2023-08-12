@@ -6,5 +6,6 @@ namespace NSE.Orders.API.Application.Queries.Interfaces
     {
         Task<OrderDTO> GetLastOrderAsync(Guid customerId);
         Task<IEnumerable<OrderDTO>> GetListByCustomerIdAsync(Guid customerId);
+        Task<OrderDTO> GetAuthorizedOrdersAsync();
     }
 }
