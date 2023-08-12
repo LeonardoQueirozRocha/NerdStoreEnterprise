@@ -11,5 +11,16 @@ namespace NSE.Catalog.API.Models
         public DateTime RegistrationDate { get; set; }
         public string Image { get; set; }
         public int QuantityInStock { get; set; }
+
+        public void RemoveOfStock(int quantity)
+        {
+            if (QuantityInStock >= quantity) 
+                QuantityInStock -= quantity;
+        }
+
+        public bool IsAvailable(int quantity)
+        {
+            return Active && QuantityInStock >= quantity;
+        }
     }
 }
