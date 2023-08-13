@@ -10,11 +10,11 @@ namespace NSE.Orders.Domain.Orders
         protected Order() { }
 
         public Order(
-            Guid customerId, 
-            decimal totalValue, 
-            List<OrderItem> orderItems, 
-            bool usedVoucher = false, 
-            decimal discount = 0, 
+            Guid customerId,
+            decimal totalValue,
+            List<OrderItem> orderItems,
+            bool usedVoucher = false,
+            decimal discount = 0,
             Guid? voucherId = null)
         {
             CustomerId = customerId;
@@ -43,6 +43,10 @@ namespace NSE.Orders.Domain.Orders
         public Voucher Voucher { get; set; }
 
         public void AuthorizeOrder() => OrderStatus = OrderStatus.Authorized;
+
+        public void CancelOrder() => OrderStatus = OrderStatus.Canceled;
+
+        public void ConcludeOrder() => OrderStatus = OrderStatus.Paid;
 
         public void AssignVoucher(Voucher voucher)
         {
