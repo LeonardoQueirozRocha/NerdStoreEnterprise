@@ -2,6 +2,7 @@
 using NSE.Core.DomainObjects;
 using NSE.Core.Messages.Integrations;
 using NSE.Payment.API.Facade.Interfaces;
+using NSE.Payment.API.Models;
 using NSE.Payment.API.Models.Enums;
 using NSE.Payment.API.Models.Interfaces;
 using NSE.Payment.API.Services.Interfaces;
@@ -49,13 +50,8 @@ public class PaymentService : IPaymentService
 
     public async Task<ResponseMessage> CapturePaymentAsync(Guid orderId)
     {
-        var transactions = await _paymentRepository.GetTransactionsByOrderIdAsync(orderId);
-        var authorizedTransaction = transactions?.FirstOrDefault(t => t.TransactionStatus == TransactionStatus.Authorized);
+        var authorizedTransaction = await GetAuthorizedTransactionAsync(orderId);
         var validationResult = new ValidationResult();
-
-        if (authorizedTransaction == null)
-            throw new DomainException($"Transação não encontrada para o pedido {orderId}");
-
         var transaction = await _paymentFacade.CapturePaymentAsync(authorizedTransaction);
 
         if (transaction.TransactionStatus != TransactionStatus.Paid)
@@ -78,13 +74,8 @@ public class PaymentService : IPaymentService
 
     public async Task<ResponseMessage> CancelPaymentAsync(Guid orderId)
     {
-        var transactions = await _paymentRepository.GetTransactionsByOrderIdAsync(orderId);
-        var authorizedTransaction = transactions?.FirstOrDefault(t => t.TransactionStatus == TransactionStatus.Authorized);
+        var authorizedTransaction = await GetAuthorizedTransactionAsync(orderId);
         var validationResult = new ValidationResult();
-
-        if (authorizedTransaction == null)
-            throw new DomainException($"Transação não encontrada para o pedido {orderId}");
-
         var transaction = await _paymentFacade.CancelAuthorizationAsync(authorizedTransaction);
 
         if (transaction.TransactionStatus != TransactionStatus.Cancelled)
@@ -103,6 +94,16 @@ public class PaymentService : IPaymentService
         }
 
         return new ResponseMessage(validationResult);
-
     }
+
+    private async Task<Transaction> GetAuthorizedTransactionAsync(Guid orderId)
+    {
+        var transactions = await _paymentRepository.GetTransactionsByOrderIdAsync(orderId);
+        var authorizedTransaction = transactions?.FirstOrDefault(t => t.TransactionStatus == TransactionStatus.Authorized);
+
+        if (authorizedTransaction == null)
+            throw new DomainException($"Transação não encontrada para o pedido {orderId}");
+
+        return authorizedTransaction;
+    }  
 }
