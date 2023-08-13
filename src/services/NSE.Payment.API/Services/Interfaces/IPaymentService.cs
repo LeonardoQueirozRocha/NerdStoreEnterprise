@@ -1,9 +1,10 @@
 ﻿using NSE.Core.Messages.Integrations;
 
-namespace NSE.Payment.API.Services.Interfaces
+namespace NSE.Payment.API.Services.Interfaces;
+
+public interface IPaymentService
 {
-    public interface IPaymentService
-    {
-        Task<ResponseMessage> AuthorizePaymentAsync(Models.Payment payment);
-    }
+    Task<ResponseMessage> AuthorizePaymentAsync(Models.Payment payment);
+    Task<ResponseMessage> CapturePaymentAsync(Guid orderId);
+    Task<ResponseMessage> CancelPaymentAsync(Guid orderId);
 }
