@@ -1,10 +1,9 @@
 ﻿using NSE.WebApp.MVC.Models.Catalog;
 
-namespace NSE.WebApp.MVC.Services.Interfaces
+namespace NSE.WebApp.MVC.Services.Interfaces;
+
+public interface ICatalogService
 {
-    public interface ICatalogService
-    {
-        Task<IEnumerable<ProductViewModel>> GetAllAsync();
-        Task<ProductViewModel> GetByIdAsync(Guid id);
-    }
+    Task<PagedViewModel<ProductViewModel>> GetAllAsync(int pageSize, int pageIndex, string query = null);
+    Task<ProductViewModel> GetByIdAsync(Guid id);
 }
