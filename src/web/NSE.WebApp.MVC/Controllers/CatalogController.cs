@@ -21,7 +21,9 @@ public class CatalogController : Controller
         [FromQuery] string q = null)
     {
         var products = await _catalogService.GetAllAsync(ps, page, q);
+        products.ReferenceAction = "Index";
         ViewBag.Search = q;
+
         return View(products);
     }
 
