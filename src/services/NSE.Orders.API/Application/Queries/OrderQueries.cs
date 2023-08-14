@@ -32,15 +32,22 @@ public class OrderQueries : IOrderQueries
 
     public async Task<OrderDTO> GetAuthorizedOrdersAsync()
     {
+        var lookup = new Dictionary<Guid, OrderDTO>();
+
         var order = await _orderRepository
             .GetConnection()
                 .QueryAsync<OrderDTO, OrderItemDTO, OrderDTO>(SqlQueries.SELECT_AUTHORIZED_ORDER, (o, oi) =>
                 {
-                    o.OrderItems = new List<OrderItemDTO> { oi };
-                    return o;
+                    if (!lookup.TryGetValue(o.Id, out var orderDTO))
+                        lookup.Add(o.Id, orderDTO = o);
+
+                    orderDTO.OrderItems ??= new List<OrderItemDTO>();
+                    orderDTO.OrderItems.Add(oi);
+
+                    return orderDTO;
                 }, splitOn: "OrderId, OrderItemId");
 
-        return order.FirstOrDefault();
+        return lookup.Values.OrderBy(o => o.Date).FirstOrDefault();
     }
 
     private static OrderDTO OrderMap(dynamic result)

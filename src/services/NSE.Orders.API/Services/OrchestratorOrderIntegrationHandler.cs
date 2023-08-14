@@ -39,22 +39,20 @@ public class OrchestratorOrderIntegrationHandler : IHostedService, IDisposable
 
     private async void ProcessOrders(object state)
     {
-        using (var scope = _serviceProvider.CreateScope())
-        {
-            var orderQueries = scope.ServiceProvider.GetRequiredService<IOrderQueries>();
-            var order = await orderQueries.GetAuthorizedOrdersAsync();
+        using var scope = _serviceProvider.CreateScope();
+        var orderQueries = scope.ServiceProvider.GetRequiredService<IOrderQueries>();
+        var order = await orderQueries.GetAuthorizedOrdersAsync();
 
-            if (order == null) return;
+        if (order == null) return;
 
-            var bus = scope.ServiceProvider.GetRequiredService<IMessageBus>();
-            var authorizedOrder = new AuthorizedOrderIntegrationEvent(
-                order.CustomerId,
-                order.Id,
-                order.OrderItems.ToDictionary(o => o.ProductId, o => o.Quantity));
+        var bus = scope.ServiceProvider.GetRequiredService<IMessageBus>();
+        var authorizedOrder = new AuthorizedOrderIntegrationEvent(
+            order.CustomerId,
+            order.Id,
+            order.OrderItems.ToDictionary(o => o.ProductId, o => o.Quantity));
 
-            await bus.PublishAsync(authorizedOrder);
+        await bus.PublishAsync(authorizedOrder);
 
-            _logger.LogInformation($"Pedido ID: {order.Id} foi encaminhado para baixa no estoque.");
-        }
+        _logger.LogInformation($"Pedido ID: {order.Id} foi encaminhado para baixa no estoque.");
     }
 }
