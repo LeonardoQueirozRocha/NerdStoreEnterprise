@@ -3,39 +3,39 @@ using Microsoft.AspNetCore.Mvc;
 using NSE.Catalog.API.Data.Repositories.Interfaces;
 using NSE.Catalog.API.Models;
 using NSE.WebApi.Core.Controllers;
-using NSE.WebApi.Core.Identity;
 
-namespace NSE.Catalog.API.Controllers
+namespace NSE.Catalog.API.Controllers;
+
+[Authorize]
+[Route("catalog/products")]
+public class CatalogController : MainController
 {
-    [Authorize]
-    [Route("catalog/products")]
-    public class CatalogController : MainController
+    private readonly IProductRepository _productRepository;
+
+    public CatalogController(IProductRepository productRepository)
     {
-        private readonly IProductRepository _productRepository;
+        _productRepository = productRepository;
+    }
 
-        public CatalogController(IProductRepository productRepository)
-        {
-            _productRepository = productRepository;
-        }
+    [AllowAnonymous]
+    [HttpGet]
+    public async Task<PagedResult<Product>> Index(
+        [FromQuery] int ps = 8,
+        [FromQuery] int page = 1,
+        [FromQuery] string q = null)
+    {
+        return await _productRepository.GetAllAsync(ps, page, q);
+    }
 
-        [AllowAnonymous]
-        [HttpGet]
-        public async Task<IEnumerable<Product>> Index()
-        {
-            return await _productRepository.GetAllAsync();
-        }
+    [HttpGet("{id:guid}")]
+    public async Task<Product> ProductDetail(Guid id)
+    {
+        return await _productRepository.GetByIdAsync(id);
+    }
 
-        [ClaimsAuthorize("Catalog", "Read")]
-        [HttpGet("{id:guid}")]
-        public async Task<Product> ProductDetail(Guid id)
-        {
-            return await _productRepository.GetByIdAsync(id);
-        }
-
-        [HttpGet("list/{ids}")]
-        public async Task<IEnumerable<Product>> GetProductsById(string ids)
-        {
-            return await _productRepository.GetProductsByIdAsync(ids);
-        }
+    [HttpGet("list/{ids}")]
+    public async Task<IEnumerable<Product>> GetProductsById(string ids)
+    {
+        return await _productRepository.GetProductsByIdAsync(ids);
     }
 }
