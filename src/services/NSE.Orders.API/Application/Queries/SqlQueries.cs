@@ -31,13 +31,13 @@ public static class SqlQueries
                                                           AND O.OrderStatus = 1
                                                    ORDER  BY O.CreationDate DESC";
 
-    public const string SELECT_AUTHORIZED_ORDER = @"SELECT TOP 1 Orders.Id     AS 'OrderId',
-                                                                 Orders.Id,
-                                                                 Orders.CustomerId,
-                                                                 OrderItems.Id AS 'OrderItemId',
-                                                                 OrderItems.Id,
-                                                                 OrderItems.ProductId,
-                                                                 OrderItems.Quantity
+    public const string SELECT_AUTHORIZED_ORDER = @"SELECT Orders.Id           AS 'OrderId',
+                                                           Orders.Id,
+                                                           Orders.CustomerId,
+                                                           OrderItems.Id       AS 'OrderItemId',
+                                                           OrderItems.Id,
+                                                           OrderItems.ProductId,
+                                                           OrderItems.Quantity
                                                     FROM   Orders
                                                            INNER JOIN OrderItems
                                                                    ON OrderItems.OrderId = Orders.Id

@@ -9,7 +9,8 @@ namespace NSE.Orders.API.Configuration
         public static void AddMessageBusConfiguration(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddMessageBus(configuration.GetMessageQueueConnectionString("MessageBus"))
-                .AddHostedService<OrchestratorOrderIntegrationHandler>();
+                .AddHostedService<OrchestratorOrderIntegrationHandler>()
+                .AddHostedService<OrderIntegrationHandler>();
         }
     }
 }
