@@ -1,33 +1,37 @@
 ﻿using NSE.WebApi.Core.Identity;
+using NSE.WebApi.Core.User;
+using NSE.WebApi.Core.User.Interfaces;
 
-namespace NSE.Identity.API.Configurations
+namespace NSE.Identity.API.Configurations;
+
+public static class ApiConfiguration
 {
-    public static class ApiConfiguration
+    public static IServiceCollection AddApiConfiguration(this IServiceCollection services)
     {
-        public static IServiceCollection AddApiConfiguration(this IServiceCollection services)
+        services.AddControllers();
+        services.AddScoped<IAspNetUser, AspNetUser>();
+
+        return services;
+    }
+
+    public static IApplicationBuilder UseApiConfiguration(this IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        if (env.IsDevelopment())
+            app.UseDeveloperExceptionPage();
+
+        app.UseHttpsRedirection();
+
+        app.UseRouting();
+
+        app.UseAuthConfiguration();
+
+        app.UseEndpoints(endpoints =>
         {
-            services.AddControllers();
+            endpoints.MapControllers();
+        });
 
-            return services;
-        }
+        app.UseJwksDiscovery();
 
-        public static IApplicationBuilder UseApiConfiguration(this IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            if (env.IsDevelopment())
-                app.UseDeveloperExceptionPage();
-
-            app.UseHttpsRedirection();
-
-            app.UseRouting();
-
-            app.UseAuthConfiguration();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
-
-            return app;
-        }
+        return app;
     }
 }
