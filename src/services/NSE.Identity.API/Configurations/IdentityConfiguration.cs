@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using NetDevPack.Security.Jwt.Core.Jwa;
 using NSE.Identity.API.Data;
 using NSE.Identity.API.Extensions;
-using NSE.WebApi.Core.Identity;
 
 namespace NSE.Identity.API.Configurations;
 
@@ -23,7 +22,5 @@ public static class IdentityConfiguration
                 .AddErrorDescriber<IdentityBrazilianPortugueseMessages>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
-
-        services.AddJwtConfiguration(configuration);
     }
 }

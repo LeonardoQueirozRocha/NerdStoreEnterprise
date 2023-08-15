@@ -141,7 +141,7 @@ public class AuthController : MainController
         return new UserResponseLogin
         {
             AccessToken = encodedToken,
-            ExpiresIn = TimeSpan.FromHours(_appSettings.ExpirationHours).TotalSeconds,
+            ExpiresIn = TimeSpan.FromHours(1).TotalSeconds,
             UserToken = new UserToken
             {
                 Id = user.Id,
