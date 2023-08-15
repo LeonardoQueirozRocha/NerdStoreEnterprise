@@ -12,6 +12,8 @@ if (builder.Environment.IsProduction())
 
 builder.Services.AddIdentityConfiguration(builder.Configuration);
 
+builder.Services.AddApiConfiguration();
+
 builder.Services.AddSwaggerConfiguration();
 
 builder.Services.AddMessageBusConfiguration(builder.Configuration);
