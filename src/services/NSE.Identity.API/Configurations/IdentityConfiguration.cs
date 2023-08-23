@@ -10,6 +10,9 @@ public static class IdentityConfiguration
 {
     public static void AddIdentityConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
+        var appSettingsSection = configuration.GetSection(nameof(AppTokenSettings));
+        services.Configure<AppTokenSettings>(appSettingsSection);
+
         services.AddJwksManager(options => options.Jws = Algorithm.Create(DigitalSignaturesAlgorithm.EcdsaSha256))
                 .PersistKeysToDatabaseStore<ApplicationDbContext>()
                 .UseJwtValidation();
