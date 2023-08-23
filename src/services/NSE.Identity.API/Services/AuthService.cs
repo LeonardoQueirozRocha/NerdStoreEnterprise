@@ -11,11 +11,8 @@ using NSE.Identity.API.Models;
 using NSE.Identity.API.Services.Base;
 using NSE.Identity.API.Services.Interfaces;
 using NSE.MessageBus.Interfaces;
-using NSE.WebApi.Core.Identity;
 using NSE.WebApi.Core.User.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Security.Claims;
 
 namespace NSE.Identity.API.Services;
@@ -24,7 +21,6 @@ public class AuthService : BaseService, IAuthService
 {
     private readonly SignInManager<IdentityUser> _signInManager;
     private readonly UserManager<IdentityUser> _userManager;
-    private readonly AppSettings _appSettings;
     private readonly AppTokenSettings _appTokenSettings;
     private readonly ApplicationDbContext _context;
     private readonly IAspNetUser _aspNetUser;
@@ -34,7 +30,6 @@ public class AuthService : BaseService, IAuthService
     public AuthService(
         SignInManager<IdentityUser> signInManager,
         UserManager<IdentityUser> userManager,
-        IOptions<AppSettings> appSettings,
         IOptions<AppTokenSettings> appTokenSettings,
         ApplicationDbContext context,
         IAspNetUser aspNetUser,
@@ -43,7 +38,6 @@ public class AuthService : BaseService, IAuthService
     {
         _signInManager = signInManager;
         _userManager = userManager;
-        _appSettings = appSettings.Value;
         _appTokenSettings = appTokenSettings.Value;
         _context = context;
         _aspNetUser = aspNetUser;
@@ -151,7 +145,7 @@ public class AuthService : BaseService, IAuthService
         return tokenHandler.WriteToken(token);
     }
 
-    private UserResponseLogin GetTokenResponse(
+    private static UserResponseLogin GetTokenResponse(
         string encodedToken,
         IdentityUser user,
         IEnumerable<Claim> claims,

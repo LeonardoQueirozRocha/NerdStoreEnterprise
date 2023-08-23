@@ -18,6 +18,8 @@ public class AspNetUser : IAspNetUser
 
     public string GetUserToken() => IsAuthenticated() ? _accessor.HttpContext.User.GetUserToken() : string.Empty;
 
+    public string GetUserRefreshToken() => IsAuthenticated() ? _accessor.HttpContext.User.GetUserRefreshToken() : string.Empty;
+
     public bool IsAuthenticated() => _accessor.HttpContext.User.Identity.IsAuthenticated;
 
     public bool IsInRole(string role) => _accessor.HttpContext.User.IsInRole(role);
