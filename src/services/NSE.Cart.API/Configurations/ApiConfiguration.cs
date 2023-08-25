@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NSE.Cart.API.Data;
+using NSE.Cart.API.Services.gRPC;
 using NSE.WebApi.Core.Identity;
 
 namespace NSE.Cart.API.Configurations
@@ -11,6 +12,8 @@ namespace NSE.Cart.API.Configurations
             services.AddDbContext<CartContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             services.AddControllers();
+
+            services.AddGrpc();
 
             services.AddCors(options =>
             {
@@ -39,6 +42,8 @@ namespace NSE.Cart.API.Configurations
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapGrpcService<CartGrpcService>()
+                         .RequireCors("Total");
             });
         }
     }
