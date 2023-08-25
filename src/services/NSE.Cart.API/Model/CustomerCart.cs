@@ -1,140 +1,139 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
 
-namespace NSE.Cart.API.Model
+namespace NSE.Cart.API.Model;
+
+public class CustomerCart
 {
-    public class CustomerCart
+    internal const int MAX_ITEM_QUANTITY = 5;
+
+    public CustomerCart() { }
+
+    public CustomerCart(Guid customerId)
     {
-        internal const int MAX_ITEM_QUANTITY = 5;
+        Id = Guid.NewGuid();
+        CustomerId = customerId;
+    }
 
-        public CustomerCart() { }
+    public Guid Id { get; set; }
+    public Guid CustomerId { get; set; }
+    public decimal TotalValue { get; set; }
+    public List<CartItem> Items { get; set; } = new List<CartItem>();
+    public ValidationResult ValidationResult { get; set; }
+    public bool UsedVoucher { get; set; }
+    public decimal Discount { get; set; }
+    public Voucher Voucher { get; set; }
 
-        public CustomerCart(Guid customerId)
+    internal void CalculateCartValue()
+    {
+        TotalValue = Items.Sum(p => p.CalculateValue());
+        CalculateDiscountTotalValue();
+    }
+
+    internal bool CartItemExists(CartItem item) => Items.Any(p => p.ProductId == item.ProductId);
+
+    internal CartItem GetByProductId(Guid productId) => Items.FirstOrDefault(p => p.ProductId == productId);
+
+    internal void AddItem(CartItem item)
+    {
+        item.AttachCart(Id);
+
+        if (CartItemExists(item))
         {
-            Id = Guid.NewGuid();
-            CustomerId = customerId;
+            var existingItem = GetByProductId(item.ProductId);
+            existingItem.AddUnits(item.Quantity);
+
+            item = existingItem;
+            Items.Remove(existingItem);
         }
 
-        public Guid Id { get; set; }
-        public Guid CustomerId { get; set; }
-        public decimal TotalValue { get; set; }
-        public List<CartItem> Items { get; set; } = new List<CartItem>();
-        public ValidationResult ValidationResult { get; set; }
-        public bool UsedVoucher { get; set; }
-        public decimal Discount { get; set; }
-        public Voucher Voucher { get; set; }
+        Items.Add(item);
+        CalculateCartValue();
+    }
 
-        internal void CalculateCartValue()
+    internal void UpdateItem(CartItem item)
+    {
+        item.AttachCart(Id);
+
+        var existedItem = GetByProductId(item.ProductId);
+
+        Items.Remove(existedItem);
+        Items.Add(item);
+
+        CalculateCartValue();
+    }
+
+    internal void UpdateUnits(CartItem item, int units)
+    {
+        item.UpdateUnits(units);
+        UpdateItem(item);
+    }
+
+    internal void RemoveItem(CartItem item)
+    {
+        Items.Remove(GetByProductId(item.ProductId));
+        CalculateCartValue();
+    }
+
+    internal bool IsValid()
+    {
+        var errors = Items.SelectMany(i => new CartItem.CartItemValidator().Validate(i).Errors).ToList();
+        errors.AddRange(new CustomerCartValidator().Validate(this).Errors);
+        ValidationResult = new ValidationResult(errors);
+
+        return ValidationResult.IsValid;
+    }
+
+    public void ApplyVoucher(Voucher voucher)
+    {
+        Voucher = voucher;
+        UsedVoucher = true;
+        CalculateCartValue();
+    }
+
+    private void CalculateDiscountTotalValue()
+    {
+        if (!UsedVoucher) return;
+
+        decimal discount = 0;
+        var value = TotalValue;
+
+        if (Voucher.DiscountType == DiscountVoucherType.Percentage)
         {
-            TotalValue = Items.Sum(p => p.CalculateValue());
-            CalculateDiscountTotalValue();
-        }
-
-        internal bool CartItemExists(CartItem item) => Items.Any(p => p.ProductId == item.ProductId);
-
-        internal CartItem GetByProductId(Guid productId) => Items.FirstOrDefault(p => p.ProductId == productId);
-
-        internal void AddItem(CartItem item)
-        {
-            item.AttachCart(Id);
-
-            if (CartItemExists(item))
+            if (Voucher.Percentage.HasValue)
             {
-                var existingItem = GetByProductId(item.ProductId);
-                existingItem.AddUnits(item.Quantity);
-
-                item = existingItem;
-                Items.Remove(existingItem);
+                discount = (value * Voucher.Percentage.Value) / 100;
+                value -= discount;
             }
-
-            Items.Add(item);
-            CalculateCartValue();
         }
-
-        internal void UpdateItem(CartItem item)
+        else
         {
-            item.AttachCart(Id);
-
-            var existedItem = GetByProductId(item.ProductId);
-
-            Items.Remove(existedItem);
-            Items.Add(item);
-
-            CalculateCartValue();
-        }
-
-        internal void UpdateUnits(CartItem item, int units)
-        {
-            item.UpdateUnits(units);
-            UpdateItem(item);
-        }
-
-        internal void RemoveItem(CartItem item)
-        {
-            Items.Remove(GetByProductId(item.ProductId));
-            CalculateCartValue();
-        }
-
-        internal bool IsValid()
-        {
-            var errors = Items.SelectMany(i => new CartItem.CartItemValidator().Validate(i).Errors).ToList();
-            errors.AddRange(new CustomerCartValidator().Validate(this).Errors);
-            ValidationResult = new ValidationResult(errors);
-
-            return ValidationResult.IsValid;
-        }
-
-        public void ApplyVoucher(Voucher voucher)
-        {
-            Voucher = voucher;
-            UsedVoucher = true;
-            CalculateCartValue();
-        }
-
-        private void CalculateDiscountTotalValue()
-        {
-            if (!UsedVoucher) return;
-
-            decimal discount = 0;
-            var value = TotalValue;
-
-            if (Voucher.DiscountType == DiscountVoucherType.Percentage)
+            if (Voucher.DiscountValue.HasValue)
             {
-                if (Voucher.Percentage.HasValue)
-                {
-                    discount = (value * Voucher.Percentage.Value) / 100;
-                    value -= discount;
-                }
+                discount = Voucher.DiscountValue.Value;
+                value -= discount;
             }
-            else
-            {
-                if (Voucher.DiscountValue.HasValue)
-                {
-                    discount = Voucher.DiscountValue.Value;
-                    value -= discount;
-                }
-            }
-
-            TotalValue = value < 0 ? 0 : value;
-            Discount = discount;
         }
 
-        public class CustomerCartValidator : AbstractValidator<CustomerCart>
+        TotalValue = value < 0 ? 0 : value;
+        Discount = discount;
+    }
+
+    public class CustomerCartValidator : AbstractValidator<CustomerCart>
+    {
+        public CustomerCartValidator()
         {
-            public CustomerCartValidator()
-            {
-                RuleFor(c => c.CustomerId)
-                    .NotEqual(Guid.Empty)
-                        .WithMessage("Cliente não reconhecido");
+            RuleFor(c => c.CustomerId)
+                .NotEqual(Guid.Empty)
+                    .WithMessage("Cliente não reconhecido");
 
-                RuleFor(c => c.Items.Count)
-                    .GreaterThan(0)
-                        .WithMessage("O carrinho não possuí itens");
+            RuleFor(c => c.Items.Count)
+                .GreaterThan(0)
+                    .WithMessage("O carrinho não possuí itens");
 
-                RuleFor(c => c.TotalValue)
-                    .GreaterThan(0)
-                        .WithMessage("O valor total do carrinho precisa ser maior que 0");
-            }
+            RuleFor(c => c.TotalValue)
+                .GreaterThan(0)
+                    .WithMessage("O valor total do carrinho precisa ser maior que 0");
         }
     }
 }
