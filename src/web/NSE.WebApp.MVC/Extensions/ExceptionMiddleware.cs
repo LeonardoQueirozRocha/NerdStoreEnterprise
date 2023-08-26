@@ -8,14 +8,14 @@ namespace NSE.WebApp.MVC.Extensions;
 public class ExceptionMiddleware
 {
     private readonly RequestDelegate _next;
-    private readonly Dictionary<StatusCode, HttpStatusCode> MapProtoStatusCodeToHttpStatusCode;
+    private readonly Dictionary<StatusCode, HttpStatusCode> _mapProtoStatusCodeToHttpStatusCode;
     private static IAuthService _authService;
 
     public ExceptionMiddleware(RequestDelegate next)
     {
         _next = next;
 
-        MapProtoStatusCodeToHttpStatusCode = new()
+        _mapProtoStatusCodeToHttpStatusCode = new()
         {
             { StatusCode.Internal, HttpStatusCode.BadRequest },
             { StatusCode.Unauthenticated, HttpStatusCode.Unauthorized },
@@ -71,7 +71,7 @@ public class ExceptionMiddleware
 
     private void HandleRpcException(HttpContext context, StatusCode protoStatusCode)
     {
-        if (!MapProtoStatusCodeToHttpStatusCode.TryGetValue(protoStatusCode, out var statusCode))
+        if (!_mapProtoStatusCodeToHttpStatusCode.TryGetValue(protoStatusCode, out var statusCode))
             statusCode = HttpStatusCode.InternalServerError;
 
         HandleRequestException(context, statusCode);
