@@ -8,19 +8,20 @@ namespace NSE.WebApp.MVC.Extensions;
 public class ExceptionMiddleware
 {
     private readonly RequestDelegate _next;
+    private readonly Dictionary<StatusCode, HttpStatusCode> MapProtoStatusCodeToHttpStatusCode;
     private static IAuthService _authService;
-
-    private readonly Dictionary<StatusCode, HttpStatusCode> MapProtoStatusCodeToHttpStatusCode = new()
-    {
-        { StatusCode.Internal, HttpStatusCode.BadRequest },
-        { StatusCode.Unauthenticated, HttpStatusCode.Unauthorized },
-        { StatusCode.PermissionDenied, HttpStatusCode.Forbidden },
-        { StatusCode.Unimplemented, HttpStatusCode.NotFound }
-    };
 
     public ExceptionMiddleware(RequestDelegate next)
     {
         _next = next;
+
+        MapProtoStatusCodeToHttpStatusCode = new()
+        {
+            { StatusCode.Internal, HttpStatusCode.BadRequest },
+            { StatusCode.Unauthenticated, HttpStatusCode.Unauthorized },
+            { StatusCode.PermissionDenied, HttpStatusCode.Forbidden },
+            { StatusCode.Unimplemented, HttpStatusCode.NotFound }
+        };
     }
 
     public async Task InvokeAsync(HttpContext context, IAuthService authService)
