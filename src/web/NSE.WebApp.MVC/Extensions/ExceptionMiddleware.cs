@@ -10,6 +10,14 @@ public class ExceptionMiddleware
     private readonly RequestDelegate _next;
     private static IAuthService _authService;
 
+    private readonly Dictionary<StatusCode, HttpStatusCode> MapProtoStatusCodeToHttpStatusCode = new()
+    {
+        { StatusCode.Internal, HttpStatusCode.BadRequest },
+        { StatusCode.Unauthenticated, HttpStatusCode.Unauthorized },
+        { StatusCode.PermissionDenied, HttpStatusCode.Forbidden },
+        { StatusCode.Unimplemented, HttpStatusCode.NotFound }
+    };
+
     public ExceptionMiddleware(RequestDelegate next)
     {
         _next = next;
@@ -33,16 +41,7 @@ public class ExceptionMiddleware
         }
         catch (RpcException ex)
         {
-            var statusCode = ex.StatusCode switch
-            {
-                StatusCode.Internal => HttpStatusCode.BadRequest,
-                StatusCode.Unauthenticated => HttpStatusCode.Unauthorized,
-                StatusCode.PermissionDenied => HttpStatusCode.Forbidden,
-                StatusCode.Unimplemented => HttpStatusCode.NotFound,
-                _ => HttpStatusCode.InternalServerError
-            };
-
-            HandleRequestException(context, statusCode);
+            HandleRpcException(context, ex.StatusCode);
         }
     }
 
@@ -67,5 +66,13 @@ public class ExceptionMiddleware
     private static void HandleCircuitBreakerExceptionAsync(HttpContext context)
     {
         context.Response.Redirect("/unavailable-system");
-    }  
+    }
+
+    private void HandleRpcException(HttpContext context, StatusCode protoStatusCode)
+    {
+        if (!MapProtoStatusCodeToHttpStatusCode.TryGetValue(protoStatusCode, out var statusCode))
+            statusCode = HttpStatusCode.InternalServerError;
+
+        HandleRequestException(context, statusCode);
+    }
 }
