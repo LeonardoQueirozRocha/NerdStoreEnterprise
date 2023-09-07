@@ -37,6 +37,36 @@ services:
       - ASPNETCORE_URLS=http://*:5001
     depends_on:
       - api-catalog
+      - api-identity
+      - api-customer
+      - api-bff-shopping
+
+  api-identity:
+    image: desenvolvedorio/nerdstore-api-identity:latest
+    container_name: nerdstore-api-identity
+    build:
+      context: ../src
+      dockerfile: ./services/NSE.Identity.API/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://*:7241
+    depends_on:
+      - rabbitmq
+      - sql-server
+
+  api-cart:
+    image: desenvolvedorio/nerdstore-api-cart:latest
+    container_name: nerdstore-api-cart
+    build:
+      context: ../src
+      dockerfile: ./services/NSE.Cart.API/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://*:7136
+    depends_on:
+      - rabbitmq
+      - api-identity
+      - sql-server
 
   api-catalog:
     image: desenvolvedorio/nerdstore-api-catalog:latest
@@ -49,4 +79,63 @@ services:
       - ASPNETCORE_URLS=http://*:7012
     depends_on:
       - rabbitmq
-  
+      - sql-server
+
+  api-customer:
+    image: desenvolvedorio/nerdstore-api-customer:latest
+    container_name: nerdstore-api-customer
+    build:
+      context: ../src
+      dockerfile: ./services/NSE.customers.API/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://*:7057
+    depends_on:
+      - rabbitmq
+      - api-identity
+      - sql-server
+
+  api-order:
+    image: desenvolvedorio/nerdstore-api-order:latest
+    container_name: nerdstore-api-order
+    build:
+      context: ../src
+      dockerfile: ./services/NSE.orders.API/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://*:7283
+    depends_on:
+      - rabbitmq
+      - api-identity
+      - sql-server
+
+  api-payment:
+    image: desenvolvedorio/nerdstore-api-payment:latest
+    container_name: nerdstore-api-payment
+    build:
+      context: ../src
+      dockerfile: ./services/NSE.payment.API/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://*:7100
+    depends_on:
+      - rabbitmq
+      - api-identity
+      - sql-server
+      - api-order
+
+  api-bff-shopping:
+    image: desenvolvedorio/nerdstore-api-bff-shopping:latest
+    container_name: nerdstore-api-bff-shopping
+    build:
+      context: ../src
+      dockerfile: ./api gateways/NSE.Bff.Shopping/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://*:7213
+    depends_on:
+      - rabbitmq
+      - api-identity
+      - api-cart
+      - api-payment
+      - api-order
