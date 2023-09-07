@@ -7,16 +7,20 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["src/services/NSE.Order.API/NSE.Order.API.csproj", "src/services/NSE.Order.API/"]
-RUN dotnet restore "src/services/NSE.Order.API/NSE.Order.API.csproj"
+COPY ["./services/NSE.Orders.API/NSE.Orders.API.csproj", "services/NSE.Orders.API/"]
+COPY ["./building blocks/NSE.Core/NSE.Core.csproj", "building blocks/NSE.WebApi.Core/"]
+COPY ["./building blocks/NSE.WebApi.Core/NSE.WebApi.Core.csproj", "building blocks/NSE.WebApi.Core/"]
+COPY ["./building blocks/NSE.MessageBus/NSE.MessageBus.csproj", "building blocks/NSE.MessageBus/"]
+
+RUN dotnet restore "services/NSE.Orders.API/NSE.Orders.API.csproj"
 COPY . .
-WORKDIR "/src/src/services/NSE.Order.API"
-RUN dotnet build "NSE.Order.API.csproj" -c Release -o /app/build
+WORKDIR "services/NSE.Orders.API"
+RUN dotnet build "NSE.Orders.API.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "NSE.Order.API.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "NSE.Orders.API.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "NSE.Order.API.dll"]
+ENTRYPOINT ["dotnet", "NSE.Orders.API.dll"]
