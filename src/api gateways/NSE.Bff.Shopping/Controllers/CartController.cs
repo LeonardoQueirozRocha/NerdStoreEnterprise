@@ -31,13 +31,13 @@ public class CartController : MainController
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        return CustomResponse(await _cartService.GetCartAsync());
+        return CustomResponse(await _cartGrpcService.GetCartAsync());
     }
 
     [HttpGet("cart-quantity")]
     public async Task<int> GetCartQuantity()
     {
-        return (await _cartService.GetCartAsync())?.Items.Sum(i => i.Quantity) ?? 0;
+        return (await _cartGrpcService.GetCartAsync())?.Items.Sum(i => i.Quantity) ?? 0;
     }
 
     [HttpPost("items")]
